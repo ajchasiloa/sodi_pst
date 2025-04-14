@@ -4,6 +4,7 @@ from odoo import models, fields
 class ResConfigSettings(models.TransientModel):
     _inherit = 'res.config.settings'
 
+<<<<<<< HEAD
     enable_account_move_import = fields.Boolean(
         string="Activar Importación de Facturas",
         config_parameter='import_dashboard.enable_account_move_import'
@@ -52,10 +53,16 @@ class ResConfigSettings(models.TransientModel):
     enable_contact_import = fields.Boolean(
         string="Activar Importación de Contactos",
         config_parameter='import_dashboard.enable_contact_import'
+=======
+    enable_import_dashboard = fields.Boolean(
+        string="Activar Import Dashboard",
+        config_parameter='import_dashboard.enable_import_dashboard'
+>>>>>>> 58ff627 (Actualización en account_move.py y account_move_view.xml)
     )
 
     def set_values(self):
         super().set_values()
+<<<<<<< HEAD
         self.env['import.dashboard'].toggle_account_move(self.enable_account_move_import)
         self.env['import.dashboard'].toggle_attendance(self.enable_attendance_import)
         self.env['import.dashboard'].toggle_bom(self.enable_bom_import)
@@ -66,3 +73,8 @@ class ResConfigSettings(models.TransientModel):
         self.env['import.dashboard'].toggle_purchase(self.show_purchase)
         self.env['import.dashboard'].toggle_product(self.enable_product_import)
         self.env['import.dashboard'].toggle_contact(self.enable_contact_import)
+=======
+        enabled = self.enable_import_dashboard
+        # Activar solo la visibilidad interna del módulo Invoice
+        self.env['import.dashboard'].toggle_invoice_module(enabled)
+>>>>>>> 58ff627 (Actualización en account_move.py y account_move_view.xml)

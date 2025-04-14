@@ -14,6 +14,7 @@
         "security/ir.model.access.csv",
         "data/data.xml",
         "wizards/account_move_view.xml",
+<<<<<<< HEAD
         "wizards/import_attendance_view.xml",
         "wizards/import_bill_of_material_views.xml",
         "wizards/import_invoice_view.xml",
@@ -27,6 +28,11 @@
         "data/import_dashboard_settings_menu.xml",
         "views/import_dashboard_settings.xml",
 
+=======
+        "views/import_dashboard.xml",
+        "data/import_dashboard_settings_menu.xml",
+        "views/import_dashboard_settings.xml",
+>>>>>>> 58ff627 (Actualización en account_move.py y account_move_view.xml)
     ],
     "controllers": [
         "controllers/main.py",

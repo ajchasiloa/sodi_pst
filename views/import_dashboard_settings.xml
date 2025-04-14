@@ -7,6 +7,7 @@
             <xpath expr="//form" position="inside">
                 <app name="import_dashboard" string="Import Dashboard" groups="base.group_system">
                     <block title="Import Dashboard">
+<<<<<<< HEAD
                         <div class="row o_settings_container">
                             
                             <!-- Primer Columna -->
@@ -111,6 +112,20 @@
                             </div>
 
                         </div>
+=======
+                        <setting string="Importador Activo">
+                            <div class="row mt16 o_settings_container">
+                                <div class="col-12 col-lg-6 o_setting_box">
+                                    <!-- Quitamos la clase que genera la línea vertical -->
+                                    <field name="enable_import_dashboard"/>
+                                    <label for="enable_import_dashboard"/>
+                                    <div class="text-muted">
+                                        Activa o desactiva las funciones del importador.
+                                    </div>
+                                </div>
+                            </div>  
+                        </setting>
+>>>>>>> 58ff627 (Actualización en account_move.py y account_move_view.xml)
                     </block>
                 </app>
             </xpath>

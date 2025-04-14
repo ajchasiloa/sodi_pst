@@ -1,7 +1,13 @@
+<<<<<<< HEAD
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
     <!-- Vista Kanban -->
+=======
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+>>>>>>> 58ff627 (Actualización en account_move.py y account_move_view.xml)
     <record id="view_import_dashboard_kanban" model="ir.ui.view">
         <field name="name">import.dashboard.kanban</field>
         <field name="model">import.dashboard</field>
@@ -9,6 +15,7 @@
             <kanban create="0">
                 <field name="name"/>
                 <field name="state"/>
+<<<<<<< HEAD
                 <field name="show_account_move"/>
                 <field name="show_attendance"/>
                 <field name="show_bom"/>
@@ -28,6 +35,19 @@
                                     <div class="oe_kanban_title d-flex justify-content-between align-items-center">
                                         <span class="o_label" style="font-size: 20px;">Invoice / Bills</span>
                                         <i class="fa fa-credit-card" style="color: #4a90e2; font-size: 36px; margin-right: 8px;"/>
+=======
+                <field name="show_invoice_module"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_content">
+                            <div>
+                                <!-- Mostrar solo si está activado en config -->
+                                <t t-if="record.show_invoice_module.raw_value and record.state.raw_value == 'account.move'">
+                                    <div class="oe_kanban_title d-flex justify-content-between align-items-center">
+                                        <span class="o_label" style="font-size: 20px;">Invoice / Bills</span>
+                                        <i class="fa fa-credit-card"
+                                           style="color: #4a90e2; font-size: 36px; margin-right: 8px;"/>
+>>>>>>> 58ff627 (Actualización en account_move.py y account_move_view.xml)
                                     </div>
                                     <button
                                         class="btn btn-sm btn-primary"
@@ -37,6 +57,7 @@
                                     >
                                         <span class="o_label">Import</span>
                                     </button>
+<<<<<<< HEAD
                                 </div>
                             </t>
 
@@ -185,6 +206,10 @@
                                 </div>
                             </t>
 
+=======
+                                </t>
+                            </div>
+>>>>>>> 58ff627 (Actualización en account_move.py y account_move_view.xml)
                         </div>
                     </t>
                 </templates>
@@ -192,6 +217,7 @@
         </field>
     </record>
 
+<<<<<<< HEAD
     <!-- Acciones -->
     <record id="action_import_bom" model="ir.actions.act_window">
         <field name="name">Import BOM</field>
@@ -249,18 +275,25 @@
     </record>
 
     <!-- Acción principal -->
+=======
+>>>>>>> 58ff627 (Actualización en account_move.py y account_move_view.xml)
     <record id="import_dashboard_action" model="ir.actions.act_window">
         <field name="name">Import Dashboard</field>
         <field name="res_model">import.dashboard</field>
         <field name="type">ir.actions.act_window</field>
         <field name="view_mode">kanban,form</field>
+<<<<<<< HEAD
         <field name="view_ids" eval="[(5, 0, 0),
             (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_import_dashboard_kanban')}),
             (0, 0, {'view_mode': 'form', 'view_id': ref('view_form_import_dashboard')})]"/>
+=======
+        <field name="view_id" ref="view_import_dashboard_kanban"/>
+>>>>>>> 58ff627 (Actualización en account_move.py y account_move_view.xml)
         <field name="usage">menu</field>
         <field name="context">{}</field>
     </record>
 
+<<<<<<< HEAD
     <!-- Vista Form vacía (si decides usarla más adelante) -->
     <record id="view_form_import_dashboard" model="ir.ui.view">
         <field name="name">import.dashboard.form</field>
@@ -277,6 +310,8 @@
     </record>
 
     <!-- Menú -->
+=======
+>>>>>>> 58ff627 (Actualización en account_move.py y account_move_view.xml)
     <menuitem
         id="menu_import_dashboard"
         name="Import Dashboard"

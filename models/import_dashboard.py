@@ -6,6 +6,7 @@ class ImportDashboard(models.Model):
     _description = "Import Dashboard"
 
     name = fields.Char("Import Dashboard")
+<<<<<<< HEAD
 
     # 'state' define el tipo de importación que representa esta tarjeta
     state = fields.Selection([
@@ -150,3 +151,12 @@ class ImportDashboard(models.Model):
             'view_mode': 'form',
             'target': 'new',
         }
+=======
+    state = fields.Selection([("account.move", "Invoice / Bill")])
+
+    show_invoice_module = fields.Boolean(string="Show Invoice Module", default=False)
+
+    @api.model
+    def toggle_invoice_module(self, enabled):
+        self.search([]).write({'show_invoice_module': enabled})
+>>>>>>> 58ff627 (Actualización en account_move.py y account_move_view.xml)

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
+<<<<<<< HEAD
     <record id="menu_dashboard_invoice" model="import.dashboard">
         <field name="name">Invoice / Bill</field>
         <field name="state">account.move</field>
@@ -53,4 +54,10 @@
         <field name="show_contact">True</field>
     </record>
 
+=======
+        <record id="menu_dashboard_invoice" model="import.dashboard">
+            <field name="name">Invoice / Bill</field>
+            <field name="state">account.move</field>
+        </record>
+>>>>>>> 58ff627 (Actualización en account_move.py y account_move_view.xml)
 </odoo>
