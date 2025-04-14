@@ -121,11 +121,16 @@ class AccountMove(models.TransientModel):
                     partner_id = self.env["res.partner"].search([("name", "=", partner_name)])
 
                     if not partner_id:
-                        error_message += "Partner '%s' not found, on row %s \n" % (
-                            partner_name,
-                            row,
-                        )
-                        continue
+                        return {
+                            'type': 'ir.actions.client',
+                            'tag': 'display_notification',
+                            'params': {
+                                'title': _('Partner no encontrado'),
+                                'message': _('El partner %s no fue encontrado en la fila %s.') % (partner_name, row),
+                                'sticky': True,
+                                'type': 'danger',
+                            }
+                        }
 
                     try:
                         date = self.parse_date(date_string)
@@ -177,11 +182,16 @@ class AccountMove(models.TransientModel):
                         ], limit=1)
 
                     if not product_id:
-                        error_message += "Product '%s' not found, on row %s \n" % (
-                            label,
-                            row,
-                        )
-                        continue
+                        return {
+                            'type': 'ir.actions.client',
+                            'tag': 'display_notification',
+                            'params': {
+                                'title': _('Producto no encontrado'),
+                                'message': _('El producto %s no fue encontrado en la fila %s.') % (label, row),
+                                'sticky': True,
+                                'type': 'danger',
+                            }
+                        }
 
                     if account:
                         # Intentamos buscar la cuenta por código
@@ -199,11 +209,16 @@ class AccountMove(models.TransientModel):
                             ], limit=1)
                         
                         if not account_id:
-                            error_message += "Account code '%s' not found. Please check if the account exists in your chart of accounts, on row %s \n" % (
-                                account,
-                                row,
-                            )
-                            continue
+                            return {
+                                'type': 'ir.actions.client',
+                                'tag': 'display_notification',
+                                'params': {
+                                    'title': _('Cuenta no encontrada'),
+                                    'message': _('La cuenta %s no fue encontrada en la fila %s.') % (account, row),
+                                    'sticky': True,
+                                    'type': 'danger',
+                                }
+                            }
 
                     invoice_lines.append(
                         (
@@ -270,32 +285,104 @@ class AccountMove(models.TransientModel):
             except Exception as e:
                 raise ValidationError(f"Error al abrir el archivo: {str(e)}")
 
-            error_message = ""
-
             for row_index in range(1, sheet.nrows):
                 row = row_index + 1
+                partner_name = sheet.cell(row_index, 2).value
                 date_string = sheet.cell(row_index, 3).value
                 end_date_string = sheet.cell(row_index, 4).value
+                label = sheet.cell(row_index, 10).value
+                account = sheet.cell(row_index, 9).value
 
+                # Validación de fechas
                 try:
-                    date = self.parse_date(date_string)
-                    end_date = self.parse_date(end_date_string)
+                    self.parse_date(date_string)
+                    self.parse_date(end_date_string)
                 except ValueError as e:
-                    error_message += str(e) + ", on row %s \n" % row
-                    continue
-
-            if error_message:
-                raise ValidationError(error_message)
-            else:
-                return {
-                    'type': 'ir.actions.client',
-                    'tag': 'display_notification',
-                    'params': {
-                        'title': _('Success'),
-                        'message': _('Everything looks correct'),
-                        'sticky': False,
+                    return {
+                        'type': 'ir.actions.client',
+                        'tag': 'display_notification',
+                        'params': {
+                            'title': _('Fecha inválida'),
+                            'message': str(e) + _(' (fila %s)') % row,
+                            'sticky': True,
+                            'type': 'danger',
+                        }
                     }
-                }
+
+                # Partner
+                partner_id = self.env["res.partner"].search([
+                    ("name", "=", partner_name)
+                ])
+                if not partner_id:
+                    return {
+                        'type': 'ir.actions.client',
+                        'tag': 'display_notification',
+                        'params': {
+                            'title': _('Partner no encontrado'),
+                            'message': _('El partner %s no fue encontrado en la fila %s.') % (partner_name, row),
+                            'sticky': True,
+                            'type': 'danger',
+                        }
+                    }
+
+                # Producto
+                if self.search_product == "name":
+                    product_id = self.env["product.product"].search([
+                        ("name", "ilike", label),
+                    ], limit=1)
+                else:
+                    product_id = self.env["product.product"].search([
+                        ("default_code", "=ilike", label),
+                    ], limit=1)
+
+                if not product_id:
+                    return {
+                        'type': 'ir.actions.client',
+                        'tag': 'display_notification',
+                        'params': {
+                            'title': _('Producto no encontrado'),
+                            'message': _('El producto %s no fue encontrado en la fila %s.') % (label, row),
+                            'sticky': True,
+                            'type': 'danger',
+                        }
+                    }
+
+                # Cuenta
+                account_id = False
+                if account:
+                    try:
+                        account_code = int(account)
+                        account_id = self.env["account.account"].search([
+                            ("code", "=ilike", str(account_code))
+                        ], limit=1)
+                    except ValueError:
+                        account_id = self.env["account.account"].search([
+                            ("name", "=ilike", account)
+                        ], limit=1)
+
+                    if not account_id:
+                        return {
+                            'type': 'ir.actions.client',
+                            'tag': 'display_notification',
+                            'params': {
+                                'title': _('Cuenta no encontrada'),
+                                'message': _('La cuenta %s no fue encontrada en la fila %s.') % (account, row),
+                                'sticky': True,
+                                'type': 'danger',
+                            }
+                        }
+
+        # Todo bien
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _('Éxito'),
+                'message': _('Todo está correcto'),
+                'sticky': False,
+                'type': 'success',
+            }
+        }
 
     def action_download_template(self):
         import os
