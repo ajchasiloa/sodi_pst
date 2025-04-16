@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ✅ Vista del wizard de Import Task -->
+    <record id="import_task_view_form" model="ir.ui.view">
+        <field name="name">import.task.view.form</field>
+        <field name="model">import.task</field>
+        <field name="arch" type="xml">
+            <form string="Import Task">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="file_type" widget="radio"/>
+                            <field name="file_upload"/>
+                        </group>
+                        <group>
+                            <field name="user_id" widget="many2one_avatar_user"/>
+                        </group>
+                    </group>
+                </sheet>
+                <footer>
+                    <!-- Botón de Importar -->
+                    <button name="action_import_task" string="Import"
+                            type="object" class="btn btn-primary"/>
+                    
+                    <!-- Botón de Test -->
+                    <button name="action_test_import_task" string="Test"
+                            type="object" class="btn btn-secondary"/>
+                    
+                    <!-- Botón de Cancelar -->
+                    <button string="Cancel" special="cancel" class="btn btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- ✅ Acción para abrir el wizard -->
+    <record id="action_import_task" model="ir.actions.act_window">
+        <field name="name">Import Task</field>
+        <field name="res_model">import.task</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>
