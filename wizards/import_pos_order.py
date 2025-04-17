@@ -149,10 +149,9 @@ class ImportPosOrder(models.TransientModel):
                     if self.file_type == 'csv':
                         vals['date_order'] = item.get('Order Date')
                     else:
-                        vals[
-                            'date_order'] = datetime.datetime.fromtimestamp(
-                            item.get('Order Date')).strftime(
-                            '%Y-%m-%d %H:%M:%S')
+                        vals['date_order'] = datetime.datetime.fromtimestamp(
+                        item.get('Order Date')).strftime(
+                        '%Y-%m-%d %H:%M:%S')
                 if item.get('Customer'):
                     partner_id = self.env['res.partner'].search(
                         [('name', '=', item.get('Customer'))])
@@ -185,4 +184,55 @@ class ImportPosOrder(models.TransientModel):
                 'message': 'Imported Successfully',
                 'type': 'rainbow_man',
             }
+        }
+
+    def action_generate_template(self):
+        """Genera una plantilla Excel para importar pedidos POS"""
+
+        import base64
+        from io import BytesIO
+        import xlsxwriter
+
+        field_labels = [
+            "Referencia de Pedido",    # Order Ref
+            "Fecha de Pedido",         # Order Date
+            "Cliente",                # Customer
+            "Número de Recibo",       # Receipt Number
+            "Responsable",            # Responsible
+            "Sesión",                 # Session
+            "Producto",               # Product
+            "Cantidad",               # Quantity
+            "Precio Unitario",        # Unit Price
+            "Descuento %",            # Discount %
+            "Subtotal",               # Sub Total
+            "Importe de Impuestos",   # Tax Amount
+            "Total",                  # Total
+            "Monto Pagado",           # Paid Amount
+            "Monto Devuelto"          # Amount Returned
+        ]
+
+        output = BytesIO()
+        workbook = xlsxwriter.Workbook(output, {'in_memory': True})
+        worksheet = workbook.add_worksheet("POS Order Import Template")
+
+        # Formato de encabezado
+        header_format = workbook.add_format({'bold': True, 'bg_color': '#D9D9D9'})
+        for col, label in enumerate(field_labels):
+            worksheet.write(0, col, label, header_format)
+
+        workbook.close()
+        output.seek(0)
+
+        # Crear archivo adjunto
+        attachment = self.env['ir.attachment'].create({
+            'name': 'pos_order_import_template.xlsx',
+            'type': 'binary',
+            'datas': base64.b64encode(output.read()).decode(),
+            'mimetype': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        })
+
+        return {
+            'type': 'ir.actions.act_url',
+            'url': f'/web/content/{attachment.id}?download=true',
+            'target': 'self',
         }

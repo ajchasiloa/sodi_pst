@@ -87,6 +87,49 @@ class ImportTask(models.TransientModel):
             }
         }
 
+    def action_generate_template(self):
+        """Genera una plantilla Excel para importar tareas de proyecto"""
+
+        import base64
+        from io import BytesIO
+        import xlsxwriter
+
+        # Columnas requeridas por el importador de tareas
+        field_labels = [
+            "Proyecto",           # Project
+            "Título",             # Title
+            "Cliente",            # Customer
+            "Fecha Límite",       # Deadline
+            "Tarea Padre"         # Parent Task
+        ]
+
+        # Crear archivo en memoria
+        output = BytesIO()
+        workbook = xlsxwriter.Workbook(output, {'in_memory': True})
+        worksheet = workbook.add_worksheet("Task Import Template")
+
+        # Estilo para encabezados
+        header_format = workbook.add_format({'bold': True, 'bg_color': '#D9D9D9'})
+        for col, label in enumerate(field_labels):
+            worksheet.write(0, col, label, header_format)
+
+        workbook.close()
+        output.seek(0)
+
+        # Crear adjunto en Odoo
+        attachment = self.env['ir.attachment'].create({
+            'name': 'task_import_template.xlsx',
+            'type': 'binary',
+            'datas': base64.b64encode(output.read()).decode(),
+            'mimetype': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        })
+
+        return {
+            'type': 'ir.actions.act_url',
+            'url': f'/web/content/{attachment.id}?download=true',
+            'target': 'self',
+        }
+
     def action_import_task(self):
         """ Method to import tasks from .csv or .xlsx files """
         res_partner = self.env['res.partner']

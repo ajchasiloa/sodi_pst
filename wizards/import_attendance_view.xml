@@ -11,11 +11,11 @@
                     </group>
                 </group>
                 <footer>
-                    <button string="Import" class="btn-primary" type="object"
-                            name="action_import_attendance"/>
-                    <button string="Test" class="btn-secondary" type="object"
-                            name="action_test_attendance"/>
-                    <button string="Cancel" special="cancel"/>
+
+                    <button string="Import" class="btn-primary" type="object" name="action_import_attendance"/>
+                    <button string="Test" class="btn-primary" type="object" name="action_test_attendance"/>
+                    <button string="Descargar Plantilla" class="btn btn-sm btn-primary" type="object" name="action_generate_template"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
                 </footer>
             </form>
         </field>

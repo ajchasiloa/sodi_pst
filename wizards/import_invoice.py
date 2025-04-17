@@ -275,4 +275,52 @@ class ImportInvoice(models.TransientModel):
                 rows.append(dict(zip(headers, row)))
             return rows
         except Exception as e:
-            raise ValidationError(f"Invalid XLSX file. Error: {e}")
+            raise ValidationError(f"Archivo XLSX no válido. Error: {e}")
+
+    def action_generate_template(self):
+        """Genera una plantilla Excel para importar facturas"""
+
+        import base64
+        from io import BytesIO
+        import xlsxwriter
+
+        # Definimos los encabezados requeridos
+        field_labels = [
+            "Socio",                   # Partner
+            "Fecha de Factura",        # Invoice Date
+            "Fecha de Vencimiento",    # Due Date
+            "Número",                  # Number
+            "Producto",                # Product
+            "Código de Cuenta",        # Account Code
+            "UoM",                     # Uom
+            "Cantidad",                # Quantity
+            "Precio"                   # Price
+        ]
+
+        # Crear archivo Excel en memoria
+        output = BytesIO()
+        workbook = xlsxwriter.Workbook(output, {'in_memory': True})
+        worksheet = workbook.add_worksheet("Invoice Import Template")
+
+        # Estilo para encabezado
+        header_format = workbook.add_format({'bold': True, 'bg_color': '#D9D9D9'})
+        for col, label in enumerate(field_labels):
+            worksheet.write(0, col, label, header_format)
+
+        workbook.close()
+        output.seek(0)
+
+        # Crear archivo adjunto en Odoo
+        attachment = self.env['ir.attachment'].create({
+            'name': 'invoice_import_template.xlsx',
+            'type': 'binary',
+            'datas': base64.b64encode(output.read()).decode(),
+            'mimetype': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        })
+
+        # Retornar acción de descarga
+        return {
+            'type': 'ir.actions.act_url',
+            'url': f'/web/content/{attachment.id}?download=true',
+            'target': 'self',
+        }

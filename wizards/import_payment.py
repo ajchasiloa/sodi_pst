@@ -18,6 +18,11 @@ class ImportPayment(models.TransientModel):
         help='It helps to choose the file type'
     )
     file_upload = fields.Binary(string='File Upload', attachment=False, help='It helps to upload files')
+    payment_type = fields.Selection(
+        selection=[('inbound', 'Receive Money'), ('outbound', 'Send Money')],
+        string='Payment Type',
+        help='Type of payment (Receive Money or Send Money)'
+    )
 
     def action_import_payment(self):
         """ Method to import payments from .csv or .xlsx files. """
@@ -173,4 +178,48 @@ class ImportPayment(models.TransientModel):
                 'message': 'The file was validated successfully.',
                 'sticky': False,
             }
+        }
+
+    def action_generate_template(self):
+        """Genera una plantilla Excel para importar pagos"""
+
+        import base64
+        from io import BytesIO
+        import xlsxwriter
+
+        # Encabezados requeridos en el archivo de importación
+        field_labels = [
+            "Monto",                    # Amount
+            "Fecha",                    # Date
+            "Diario",                   # Journal
+            "Cliente/Proveedor",        # Customer/Vendor
+            "Tipo de Pago",             # Payment Type
+            "Número"                     # Number
+        ]
+
+        # Crear archivo Excel en memoria
+        output = BytesIO()
+        workbook = xlsxwriter.Workbook(output, {'in_memory': True})
+        worksheet = workbook.add_worksheet("Payment Import Template")
+
+        # Formato visual para los encabezados
+        header_format = workbook.add_format({'bold': True, 'bg_color': '#D9D9D9'})
+        for col, label in enumerate(field_labels):
+            worksheet.write(0, col, label, header_format)
+
+        workbook.close()
+        output.seek(0)
+
+        # Crear archivo adjunto para descarga
+        attachment = self.env['ir.attachment'].create({
+            'name': 'payment_import_template.xlsx',
+            'type': 'binary',
+            'datas': base64.b64encode(output.read()).decode(),
+            'mimetype': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        })
+
+        return {
+            'type': 'ir.actions.act_url',
+            'url': f'/web/content/{attachment.id}?download=true',
+            'target': 'self',
         }

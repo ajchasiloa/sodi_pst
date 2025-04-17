@@ -74,20 +74,23 @@ class ImportAttendance(models.TransientModel):
         }
 
     def action_test_attendance(self):
+        """Test the file before import"""
         if not self.file_upload:
-            raise ValidationError("Por favor carga un archivo primero.")
+            raise ValidationError("Por favor, sube un archivo válido antes de continuar.")
 
-        datas = {}
-
+        # Validate file type
         if self.file_type == 'csv':
             try:
                 csv_data = base64.b64decode(self.file_upload)
                 data_file = io.StringIO(csv_data.decode("utf-8"))
                 data_file.seek(0)
-                datas = csv.DictReader(data_file, delimiter=',')
-            except:
-                raise ValidationError("Formato de CSV inválido.")
-
+                csv_reader = csv.DictReader(data_file, delimiter=',')
+                rows = list(csv_reader)
+                if not rows:
+                    raise ValidationError("The CSV file is empty.")
+            except Exception as e:
+                raise ValidationError(f"Error reading the CSV file: {str(e)}")
+        
         elif self.file_type == 'xls':
             try:
                 fp = tempfile.NamedTemporaryFile(delete=False, suffix=".xlsx")
@@ -95,53 +98,63 @@ class ImportAttendance(models.TransientModel):
                 fp.seek(0)
                 workbook = xlrd.open_workbook(fp.name)
                 sheet = workbook.sheet_by_index(0)
-            except:
-                raise ValidationError("Formato de XLS inválido.")
-
-            headers = sheet.row_values(0)
-            data = []
-            for row_index in range(1, sheet.nrows):
-                row = sheet.row_values(row_index)
-                data += [{k: v for k, v in zip(headers, row)}]
-            datas = data
-
-        # Validación de contenido
-        hr_employee = self.env['hr.employee']
-        errors = ""
-        for idx, item in enumerate(datas):
-            row = idx + 2  # la fila 1 es encabezado
-
-            employee_name = item.get('Employee')
-            if not employee_name:
-                errors += f"Falta el nombre del empleado en fila {row}\n"
-            else:
-                employee = hr_employee.search([('name', '=', employee_name)])
-                if not employee:
-                    errors += f"Empleado '{employee_name}' no encontrado (fila {row})\n"
-
-            for campo_fecha in ['Check In', 'Check Out']:
-                valor = item.get(campo_fecha)
-                if valor:
-                    if self.file_type == 'csv':
-                        try:
-                            fields.Datetime.from_string(valor)
-                        except:
-                            errors += f"'{campo_fecha}' inválido en fila {row}: {valor}\n"
-                    else:
-                        try:
-                            xlrd.xldate_as_datetime(valor, 0)
-                        except:
-                            errors += f"'{campo_fecha}' inválido en fila {row}: {valor}\n"
-
-        if errors:
-            raise ValidationError(errors)
-
+                if sheet.nrows <= 1:  # If there's no data except header
+                    raise ValidationError("The XLSX file is empty.")
+            except Exception as e:
+                raise ValidationError(f"Error reading the XLSX file: {str(e)}")
+        
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
-                'title': 'Validación exitosa',
-                'message': 'El archivo fue validado correctamente',
+                'title': _('Validation Success'),
+                'message': _('File validated successfully.'),
                 'sticky': False,
             }
+        }
+
+    def action_generate_template(self):
+        """Genera una plantilla Excel para importar asistencias de empleados"""
+
+        import base64
+        from io import BytesIO
+        import xlsxwriter
+
+        # Encabezados que el archivo debe contener
+        field_labels = [
+            "Empleado",       # Nombre del empleado
+            "Entrada",       # Fecha/hora de entrada
+            "Salida",        # Fecha/hora de salida
+            "Horas Trabajadas"    # Horas trabajadas
+        ]
+
+        # Crear archivo Excel en memoria
+        output = BytesIO()
+        workbook = xlsxwriter.Workbook(output, {'in_memory': True})
+        worksheet = workbook.add_worksheet("Attendance Template")
+
+        # Formato del encabezado
+        header_format = workbook.add_format({'bold': True, 'bg_color': '#D9D9D9'})
+
+        # Escribir encabezados en la primera fila
+        for col, label in enumerate(field_labels):
+            worksheet.write(0, col, label, header_format)
+
+        # Cerrar y preparar archivo
+        workbook.close()
+        output.seek(0)
+
+        # Crear attachment en Odoo
+        attachment = self.env['ir.attachment'].create({
+            'name': 'attendance_import_template.xlsx',
+            'type': 'binary',
+            'datas': base64.b64encode(output.read()).decode(),
+            'mimetype': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        })
+
+        # Retornar URL de descarga
+        return {
+            'type': 'ir.actions.act_url',
+            'url': f'/web/content/{attachment.id}?download=true',
+            'target': 'self',
         }

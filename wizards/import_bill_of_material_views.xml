@@ -4,14 +4,12 @@
         <field name="name">import.bill.of.material.view.form</field>
         <field name="model">import.bill.of.material</field>
         <field name="arch" type="xml">
-            <form string="Import BOM">
+            <form string="Import Bill of Material">
                 <sheet>
                     <group>
                         <group>
-                            <field name="file_type" widget="radio"/>
+                            <field name="file_type"/>
                             <field name="file_upload"/>
-                        </group>
-                        <group>
                             <field name="import_product_by"/>
                             <field name="bom_type"/>
                             <field name="bom_component"/>
@@ -20,7 +18,8 @@
                 </sheet>
                 <footer>
                     <button name="action_import_bom" type="object" string="Import" class="btn btn-primary"/>
-                    <button string="Test" class="btn-secondary" type="object" name="action_test_import_bom"/>
+                    <button string="Test" class="btn-primary" type="object" name="action_test_import_bom"/>
+                    <button string="Descargar Plantilla" class="btn btn-sm btn-primary" type="object" name="action_generate_template"/>
                     <button string="Cancel" special="cancel" class="btn-secondary"/>
                 </footer>
             </form>

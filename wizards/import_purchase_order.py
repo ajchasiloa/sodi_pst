@@ -111,6 +111,58 @@ class ImportPurchaseOrder(models.TransientModel):
             }
         }
 
+    def action_generate_template(self):
+        """Genera una plantilla Excel para importar órdenes de compra"""
+
+        import base64
+        from io import BytesIO
+        import xlsxwriter
+
+        field_labels = [
+            "Referencia de Pedido",        # Order Reference
+            "Proveedor",                 # Vendor
+            "Referencia del Proveedor",   # Vendor Reference
+            "Fecha Límite de Pedido",     # Order Deadline
+            "Fecha de Recepción",         # Receipt Date
+            "Representante de Compras",   # Purchase Representative
+            "Producto",                   # Product
+            "Referencia Interna",         # Internal Reference
+            "Código de Barras",           # Barcode
+            "Valores de Variante",        # Variant Values
+            "Descripción",                # Description
+            "Cantidad",                   # Quantity
+            "UoM",                        # Uom
+            "Precio Unitario",            # Unit Price
+            "Fecha de Entrega",           # Delivery Date
+            "Impuestos"                   # Taxes
+        ]
+
+        output = BytesIO()
+        workbook = xlsxwriter.Workbook(output, {'in_memory': True})
+        worksheet = workbook.add_worksheet("PO Import Template")
+
+        # Estilo del encabezado
+        header_format = workbook.add_format({'bold': True, 'bg_color': '#D9D9D9'})
+        for col, label in enumerate(field_labels):
+            worksheet.write(0, col, label, header_format)
+
+        workbook.close()
+        output.seek(0)
+
+        # Crear attachment
+        attachment = self.env['ir.attachment'].create({
+            'name': 'purchase_order_import_template.xlsx',
+            'type': 'binary',
+            'datas': base64.b64encode(output.read()).decode(),
+            'mimetype': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        })
+
+        return {
+            'type': 'ir.actions.act_url',
+            'url': f'/web/content/{attachment.id}?download=true',
+            'target': 'self',
+        }
+
     def action_import_purchase_order(self):
         """Creating purchase record using uploaded xl/csv files"""
         purchase_order = self.env['purchase.order']

@@ -23,8 +23,8 @@
                 </sheet>
                 <footer>
                     <button name="action_import_invoice" type="object" string="Import" class="btn btn-primary"/>
-                    <!-- Vincula el botón "Test" con el método action_test_import_invoice -->
-                    <button string="Test" class="btn-secondary" type="object" name="action_test_import_invoice"/>
+                    <button string="Test" class="btn-primary" type="object" name="action_test_import_invoice"/>
+                    <button string="Descargar Plantilla" class="btn btn-sm btn-primary" type="object" name="action_generate_template"/>
                     <button string="Cancel" special="cancel" class="btn-secondary"/>
                 </footer>
             </form>

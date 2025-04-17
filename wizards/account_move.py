@@ -334,7 +334,7 @@ class AccountMove(models.TransientModel):
             'url': f'/web/content/{attachment.id}?download=true',
             'target': 'self',
         }
-
+#Modificar en caso de nuevos camposs futuros
     def action_generate_template(self):
         """Genera una plantilla Excel para importar facturas"""
         

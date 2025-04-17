@@ -250,3 +250,52 @@ class ImportBillOfMaterial(models.TransientModel):
                 'sticky': False,
             }
         }
+
+    def action_generate_template(self):
+        """Genera una plantilla Excel para importar estructuras de BOM"""
+
+        import base64
+        from io import BytesIO
+        import xlsxwriter
+
+        # Encabezados requeridos
+        field_labels = [
+            "Producto",                         # Producto
+            "Producto/Referencia Interna",      # Referencia Interna del Producto
+            "Producto/Código de Barras",        # Código de Barras del Producto
+            "Cantidad",                         # Cantidad
+            "Referencia",                       # Referencia
+            "Tipo de Lista de Materiales",      # Tipo de BoM
+            "Componentes",                      # Componentes
+            "Componentes/Referencia Interna",   # Referencia Interna de Componentes
+            "Componentes/Código de Barras",     # Código de Barras de Componentes
+            "Líneas de BoM/Cantidad"            # Cantidad de Líneas de BoM
+        ]
+
+        # Crear Excel en memoria
+        output = BytesIO()
+        workbook = xlsxwriter.Workbook(output, {'in_memory': True})
+        worksheet = workbook.add_worksheet("BOM Import Template")
+
+        # Formato para encabezados
+        header_format = workbook.add_format({'bold': True, 'bg_color': '#D9D9D9'})
+        for col, label in enumerate(field_labels):
+            worksheet.write(0, col, label, header_format)
+
+        workbook.close()
+        output.seek(0)
+
+        # Crear adjunto
+        attachment = self.env['ir.attachment'].create({
+            'name': 'bom_import_template.xlsx',
+            'type': 'binary',
+            'datas': base64.b64encode(output.read()).decode(),
+            'mimetype': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        })
+
+        # Retornar archivo para descarga
+        return {
+            'type': 'ir.actions.act_url',
+            'url': f'/web/content/{attachment.id}?download=true',
+            'target': 'self',
+        }

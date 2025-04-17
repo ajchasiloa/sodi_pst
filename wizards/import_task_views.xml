@@ -24,7 +24,10 @@
                     
                     <!-- Botón de Test -->
                     <button name="action_test_import_task" string="Test"
-                            type="object" class="btn btn-secondary"/>
+                            type="object" class="btn btn-primary"/>
+                    
+                    <!-- Botón de Descargar Plantilla -->
+                    <button string="Descargar Plantilla" class="btn btn-sm btn-primary" type="object" name="action_generate_template"/>
                     
                     <!-- Botón de Cancelar -->
                     <button string="Cancel" special="cancel" class="btn btn-secondary"/>

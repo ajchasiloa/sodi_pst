@@ -11,17 +11,14 @@
                         <group>
                             <field name="file_type" widget="radio"/>
                             <field name="file_upload"/>
+                            <field name="payment_type"/>
                         </group>
                     </group>
                 </sheet>
                 <footer>
-                    <!-- Botón para iniciar la importación -->
                     <button name="action_import_payment" type="object" string="Import" class="btn btn-primary"/>
-                    
-                    <!-- Botón para realizar la prueba de validación -->
-                    <button name="action_test_import_payment" type="object" string="Test" class="btn-secondary"/>
-                    
-                    <!-- Botón para cancelar -->
+                    <button name="action_test_import_payment" type="object" string="Test" class="btn-primary"/>
+                    <button string="Descargar Plantilla" class="btn btn-sm btn-primary" type="object" name="action_generate_template"/>
                     <button string="Cancel" special="cancel" class="btn-secondary"/>
                 </footer>
             </form>

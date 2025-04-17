@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <odoo>
+    <!-- Wizard for import invoices and bills-->
         <record id="wizard_import_account_move_form" model="ir.ui.view">
             <field name="name">Wizard for import invoices and bills</field>
             <field name="model">import.account.move.wizard</field>
