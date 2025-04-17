@@ -1,0 +1,7 @@
+xlwt==1.3.*
+xlrd==1.1.0; python_version < '3.8'
+xlrd==1.2.0; python_version >= '3.8'
+<<<<<<< HEAD
+openpyxl>=3.1.0
+=======
+>>>>>>> 58ff627 (Actualización en account_move.py y account_move_view.xml)
