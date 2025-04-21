@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="menu_dashboard_invoice" model="import.dashboard">
+        <field name="name">Invoice / Bill</field>
+        <field name="state">account.move</field>
+    </record>
+
+    <record id="menu_dashboard_attendance" model="import.dashboard">
+        <field name="name">Attendance</field>
+        <field name="state">import.attendance</field>
+    </record>
+    
+    <record id="menu_dashboard_bom" model="import.dashboard">
+        <field name="name">Bill of Material</field>
+        <field name="state">import.bill.of.material</field>
+    </record>
+
+    <record id="menu_dashboard_invoice_import" model="import.dashboard">
+        <field name="name">Importación de Facturas</field>
+        <field name="state">import.invoice</field>
+    </record>
+
+    <record id="menu_dashboard_payment" model="import.dashboard">
+        <field name="name">Payment Import</field>
+        <field name="state">import.payment</field>
+    </record>
+
+    <record id="menu_dashboard_task" model="import.dashboard">
+        <field name="name">Task</field>
+        <field name="state">import.task</field>
+    </record>
+
+    <record id="menu_dashboard_purchase" model="import.dashboard">
+        <field name="name">Purchase Order</field>
+        <field name="state">import.purchase.order</field>
+        <field name="show_purchase" eval="True"/>
+    </record>
+
+    <record id="menu_dashboard_pos" model="import.dashboard">
+        <field name="name">POS</field>
+        <field name="state">import.pos.order</field>
+    </record>
+
+    <record id="menu_dashboard_product" model="import.dashboard">
+        <field name="name">Productos</field>
+        <field name="state">wizard.producto</field>
+        <field name="show_product">True</field>
+    </record>
+
+    <record id="menu_dashboard_contact" model="import.dashboard">
+        <field name="name">Contactos</field>
+        <field name="state">import.contact.wizard</field>
+        <field name="show_contact">True</field>
+    </record>
+
+</odoo>
