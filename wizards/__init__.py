@@ -8,4 +8,4 @@ from . import import_pos_order
 from . import import_purchase_order 
 from . import wizard_producto
 from . import contact_import_wizard
-from . import import_message
+from . import import_message 

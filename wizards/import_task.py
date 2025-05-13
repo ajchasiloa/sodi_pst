@@ -36,9 +36,9 @@ class ImportTask(models.TransientModel):
                 reader = csv.reader(data_file)
                 rows = list(reader)
                 if len(rows) <= 1:  # Si solo tiene una fila (cabecera), es un archivo vacío
-                    raise ValidationError("The CSV file is empty or missing data.")
+                    raise ValidationError("El archivo CSV está vacío o falta contenido.")
             except Exception as e:
-                raise ValidationError(f"Error reading the file as CSV: {str(e)}")
+                raise ValidationError(f"Error leyendo el archivo CSV: {str(e)}")
         
         elif self.file_type == 'xls':
             try: 
@@ -49,40 +49,38 @@ class ImportTask(models.TransientModel):
                 workbook = xlrd.open_workbook(fp.name)
                 sheet = workbook.sheet_by_index(0)
                 if sheet.nrows <= 1:  # Si solo tiene una fila (cabecera), es un archivo vacío
-                    raise ValidationError("The XLSX file is empty or missing data.")
+                    raise ValidationError("El archivo XLSX está vacío o falta contenido.")
                 rows = [sheet.row_values(row_idx) for row_idx in range(1, sheet.nrows)]
             except Exception as e:
-                raise ValidationError(f"Error reading the file as XLSX: {str(e)}")
+                raise ValidationError(f"Error leyendo el archivo XLSX: {str(e)}")
         
         else:
-            raise ValidationError("Invalid file type. Only CSV and XLSX are allowed.")
+            raise ValidationError("Tipo de archivo no válido. Solo se permiten archivos CSV y XLSX.")
 
         # 3. Validación de campos requeridos
         error_msg = ""
         for row_index, row in enumerate(rows, start=2):  # empieza desde la fila 2
             if not row or len(row) < 5:
-                error_msg += f"Row {row_index} is empty or incomplete.\n"
+                error_msg += f"Fila {row_index} está vacía o incompleta.\n"
                 continue
-            if not row[0]:  # Amount
-                error_msg += f"Amount is missing in row {row_index}\n"
-            if not row[1]:  # Date
-                error_msg += f"Date is missing in row {row_index}\n"
-            if not row[2]:  # Journal
-                error_msg += f"Journal is missing in row {row_index}\n"
-            if not row[3]:  # Customer
-                error_msg += f"Customer is missing in row {row_index}\n"
-            if not row[4]:  # Payment Type
-                error_msg += f"Payment Type is missing in row {row_index}\n"
+            if not row[0]:  # Proyecto
+                error_msg += f"El proyecto falta en la fila {row_index}\n"
+            if not row[1]:  # Título
+                error_msg += f"El título falta en la fila {row_index}\n"
+            if not row[3]:  # Fecha límite
+                error_msg += f"La fecha límite falta en la fila {row_index}\n"
+            if not row[4]:  # Tarea padre
+                error_msg += f"La tarea padre falta en la fila {row_index}\n"
         
         if error_msg:
-            raise ValidationError(f"Validation failed:\n{error_msg}")
+            raise ValidationError(f"Error de validación:\n{error_msg}")
 
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
-                'title': 'Validation Success',
-                'message': 'The file was validated successfully.',
+                'title': 'Validación exitosa',
+                'message': 'El archivo fue validado exitosamente.',
                 'sticky': False,
             }
         }
@@ -98,7 +96,6 @@ class ImportTask(models.TransientModel):
         field_labels = [
             "Proyecto",           # Project
             "Título",             # Title
-            "Cliente",            # Customer
             "Fecha Límite",       # Deadline
             "Tarea Padre"         # Parent Task
         ]
@@ -109,21 +106,42 @@ class ImportTask(models.TransientModel):
         worksheet = workbook.add_worksheet("Task Import Template")
 
         # Estilo para encabezados
-        header_format = workbook.add_format({'bold': True, 'bg_color': '#D9D9D9'})
+        header_format = workbook.add_format({'bold': True, 'bg_color': '#D9D9D9', 'align': 'center', 'valign': 'vcenter'})
+
+        # Escribir encabezados en la primera fila
         for col, label in enumerate(field_labels):
             worksheet.write(0, col, label, header_format)
 
+        # Añadir una fila de ejemplo
+        example_data = [
+            "Proyecto A",            # Project
+            "Tarea 1",               # Title
+            "2024-12-31",            # Deadline
+            "Tarea Padre 1"          # Parent Task
+        ]
+
+        # Escribir los datos de ejemplo en la segunda fila
+        for col, value in enumerate(example_data):
+            worksheet.write(1, col, value)
+
+        # Ajustar automáticamente el tamaño de las columnas para que todo el texto sea visible
+        for col in range(len(field_labels)):
+            column_width = max(len(field_labels[col]), max(len(str(example_data[col])) for example_data in [example_data]))
+            worksheet.set_column(col, col, column_width)
+
+        # Cerrar y preparar el archivo
         workbook.close()
         output.seek(0)
 
         # Crear adjunto en Odoo
         attachment = self.env['ir.attachment'].create({
-            'name': 'task_import_template.xlsx',
+            'name': 'plantilla_importación_tareas.xlsx',
             'type': 'binary',
             'datas': base64.b64encode(output.read()).decode(),
             'mimetype': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         })
 
+        # Retornar archivo para descarga
         return {
             'type': 'ir.actions.act_url',
             'url': f'/web/content/{attachment.id}?download=true',
@@ -172,30 +190,23 @@ class ImportTask(models.TransientModel):
 
         for item in items:
             vals = {}
-            if item.get('Project'):
-                project = project_project.search([('name', '=', item.get('Project'))])
+            if item.get('Proyecto'):
+                project = project_project.search([('name', '=', item.get('Proyecto'))])
                 if not project:
-                    project = project_project.create({'name': item.get('Project')})
-                    info_msg += f"\nCreated new project with name :{item.get('Project')}"
+                    project = project_project.create({'name': item.get('Proyecto')})
+                    info_msg += f"\nCreated new project with name :{item.get('Proyecto')}"
                 vals['project_id'] = project.id
             
-            if item.get('Title'):
-                vals['name'] = item.get('Title')
+            if item.get('Título'):
+                vals['name'] = item.get('Título')
             else:
                 error_msg += "⚠Title missing in file!"
             
-            if item.get('Customer'):
-                partner = res_partner.search([['name', '=', item.get('Customer')]])
-                if not partner:
-                    partner = res_partner.create({'name': item.get('Customer')})
-                    info_msg += f"\nCreated new partner with name :{item.get('Customer')}"
-                vals['partner_id'] = partner.id
+            if item.get('Fecha Límite'):
+                vals['date_deadline'] = datetime.datetime.strptime(item.get('Fecha Límite'), '%Y-%m-%d')
             
-            if item.get('Deadline'):
-                vals['date_deadline'] = datetime.datetime.strptime(item.get('Deadline'), '%m/%d/%Y')
-            
-            if item.get('Parent Task'):
-                parent_task = project_task.search([('name', '=', item.get('Parent Task'))])
+            if item.get('Tarea Padre'):
+                parent_task = project_task.search([('name', '=', item.get('Tarea Padre'))])
                 if len(parent_task) > 1:
                     parent_task = parent_task[0]
                 vals['parent_id'] = parent_task.id

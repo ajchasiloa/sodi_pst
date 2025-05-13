@@ -4,7 +4,7 @@ import csv
 import datetime
 import io
 import tempfile
-import openpyxl  # Para XLSX en lugar de xlrd
+import openpyxl  
 from odoo.exceptions import ValidationError
 from odoo import fields, models
 
@@ -50,154 +50,117 @@ class ImportInvoice(models.TransientModel):
     )
 
     def action_import_invoice(self):
-        """Creating Invoice record using uploaded xl/csv files"""
+        """Importar facturas usando encabezados en español"""
+
         account_move = self.env['account.move']
-        res_partner = self.env['res.partner']
-        res_users = self.env['res.users']
         account_account = self.env['account.account']
         uom_uom = self.env['uom.uom']
-        account_tax = self.env['account.tax']
-        product_product = self.env['product.product']
-        product_attribute = self.env['product.attribute']
-        product_attribute_value = self.env['product.attribute.value']
-        product_template_attribute_value = self.env[
-            'product.template.attribute.value']
 
         items = self.read_file()
+
+        # Validar campos requeridos
+        error_msg = ""
+        for row_index, item in enumerate(items, start=2):
+            if not item or len(item) < 6:
+                error_msg += f"Fila {row_index} está vacía o incompleta.\n"
+                continue
+
+            required_fields = ['Socio', 'Fecha de Factura', 'Producto', 'Cantidad', 'Precio', 'Número']
+            for field in required_fields:
+                if not item.get(field):
+                    error_msg += f"El campo '{field}' falta en la fila {row_index}\n"
+
+        if error_msg:
+            raise ValidationError(f"Error de validación:\n{error_msg}")
 
         imported = 0
         confirmed = 0
         imported_invoices = []
-        error_msg = ""
-        partner_added_msg = ""
-        warning_msg = ""
 
-        for row, item in enumerate(items, start=1):
-            vals = {}
-            row_not_import_msg = "\n❌Row {rn} not imported.".format(rn=row)
-            import_error_msg = ""
-            missing_fields_msg = ""
-            fields_msg = "\n\t🚫Missing required field(s):"
-            partner_msg = "\n🆕New Partner(s) added:"
-            vals['move_type'] = self.type
+        for row_index, item in enumerate(items, start=2):
+            # Primero validamos si el cliente existe
+            partner_name = item.get('Socio')
+            partner = self.validar_cliente(partner_name)  # Llamada de validación al cliente
+            
+            # Validación de producto
+            product_name = item.get('Producto')
+            product = self.validar_producto(product_name)
 
-            # Partner Processing
-            if item.get('Partner'):
-                partner = res_partner.search([('name', '=', item['Partner'])])
-                if not partner:
-                    partner = res_partner.create({
-                        'name': item['Partner']
-                    })
-                    vals['partner_id'] = partner.id
-                    partner_added_msg += partner_msg + "\n\t\trow {rn}: \"{partner}\"".format(
-                        rn=row, partner=item['Partner'])
-                elif len(partner) > 1:
-                    import_error_msg += row_not_import_msg + (
-                        "\n\t\t⚠ Multiple Partners with name (%s) found!" % item['Partner'])
-                else:
-                    vals['partner_id'] = partner.id
-            else:
-                missing_fields_msg += (fields_msg + "\n\t\t❗ \"Partner\"")
+            # Validación de fecha de factura
+            invoice_date = self.parsear_fecha(item['Fecha de Factura'], row_index)
 
-            # Invoice Date Processing
-            if item.get('Invoice Date'):
-                try:
-                    invoice_date = datetime.datetime.strptime(item['Invoice Date'], '%m/%d/%Y')
-                    vals['invoice_date'] = invoice_date
-                except:
-                    import_error_msg += row_not_import_msg + "\n\t\t⚠ Invalid Invoice Date format."
+            # Validación de cantidad y precio
+            try:
+                cantidad = float(item['Cantidad'])
+                precio = float(item['Precio'])
+            except ValueError:
+                raise ValidationError(f"Cantidad o precio inválido en la fila {row_index}")
 
-            # Due Date Processing
-            if item.get('Due Date'):
-                try:
-                    due_date = datetime.datetime.strptime(item['Due Date'], '%m/%d/%Y')
-                    vals['invoice_date_due'] = due_date
-                except:
-                    import_error_msg += row_not_import_msg + "\n\t\t⚠ Invalid Due Date format."
+            # Validación de número de factura único
+            invoice_number = item.get('Número')
+            existing_invoice = account_move.search([
+                ('name', '=', invoice_number),
+                ('move_type', '=', self.type)
+            ], limit=1)
+            
+            if existing_invoice:
+                raise ValidationError(f"⚠ La factura con número '{invoice_number}' ya está registrada en el sistema. No se creará esta factura.")
 
-            # Searching for existing invoices or creating new ones
-            invoice = account_move.search([('name', '=', item.get('Number')),
-                                           ('move_type', '=', vals['move_type'])])
-            if invoice:
-                if len(invoice) > 1:
-                    error_msg += row_not_import_msg + "\n\t⚠ Multiple invoices with same Number (%s) found!" % item['Number']
-                    continue
-                if vals:
-                    if self.update_posted and invoice.state == 'posted':
-                        invoice.button_draft()
-                        invoice.write(vals)
-                    elif invoice.state == 'draft':
-                        invoice.write(vals)
-            else:
-                if self.order_number == 'from_system':
-                    invoice = account_move.create(vals)
-                if self.order_number == 'from_file' and item.get('Number'):
-                    vals['name'] = item['Number']
-                    invoice = account_move.create(vals)
-                else:
-                    error_msg += row_not_import_msg + "\n\t⚠ Missing Invoice Number."
-                    continue
+            # Preparar valores para la factura
+            vals = {
+                'move_type': self.type,
+                'partner_id': partner.id,
+                'invoice_date': invoice_date,
+                'name': invoice_number
+            }
 
-            # Processing Invoice Lines
-            line_vals = {}
-            pro_vals = {}
+            # Fecha de vencimiento (opcional)
+            if item.get('Fecha de Vencimiento'):
+                vals['invoice_date_due'] = self.parsear_fecha(
+                    item['Fecha de Vencimiento'], 
+                    row_index, 
+                    campo='Fecha de Vencimiento'
+                )
 
-            if item.get('Product'):
-                product = product_product.search([('name', '=', item['Product'])])
-                if not product:
-                    pro_vals['name'] = item['Product']
-                    product = product_product.create(pro_vals)
+            # Crear factura
+            invoice = account_move.create(vals)
 
-                line_vals['product_id'] = product.id
-            else:
-                error_msg += row_not_import_msg + "\n\t⚠ Product missing in file!"
+            # Preparar línea de factura
+            line_vals = {
+                'product_id': product.id,
+                'quantity': cantidad,
+                'price_unit': precio
+            }
 
-            # Account code and UOM processing
-            if item.get('Account Code'):
-                account = account_account.search([('code', '=', int(item['Account Code']))])
-                line_vals['account_id'] = account.id
-            if item.get('Uom'):
-                uom = uom_uom.search([('name', '=', item['Uom'])])
+            # Cuenta contable (opcional)
+            if item.get('Código de Cuenta'):
+                account = account_account.search([('code', '=', str(item['Código de Cuenta']).strip())], limit=1)
+                if account:
+                    line_vals['account_id'] = account.id
+
+            # Unidad de medida (opcional)
+            if item.get('UoM'):
+                uom = uom_uom.search([('name', '=', item['UoM'])], limit=1)
                 if uom:
                     line_vals['product_uom_id'] = uom.id
 
-            # Price and Quantity
-            if item.get('Quantity'):
-                line_vals['quantity'] = item['Quantity']
-            if item.get('Price'):
-                line_vals['price_unit'] = item['Price']
+            # Agregar línea de factura
+            invoice.write({'invoice_line_ids': [(0, 0, line_vals)]})
+            
+            imported += 1
+            imported_invoices.append(invoice)
 
-            # Adding Line to the Invoice
-            if line_vals:
-                invoice.write({'invoice_line_ids': [(0, 0, line_vals)]})
-                imported += 1
-                imported_invoices.append(invoice)
+        # Post if needed
+        if self.auto_post and imported_invoices:
+            for inv in set(imported_invoices):
+                inv.action_post()
+                confirmed += 1
 
-            if self.auto_post and imported_invoices:
-                for inv in imported_invoices:
-                    inv.action_post()
-                    confirmed += 1
-
-        if error_msg:
-            error_msg = "\n\n🏮 WARNING 🏮" + error_msg
-            error_message = self.env['import.message'].create({'message': error_msg})
-            return {
-                'name': 'Error!',
-                'type': 'ir.actions.act_window',
-                'view_mode': 'form',
-                'res_model': 'import.message',
-                'res_id': error_message.id,
-                'target': 'new'
-            }
-
-        msg = f"Imported {imported} records.\nPosted {confirmed} records" + partner_added_msg + warning_msg
-        message = self.env['import.message'].create({'message': msg})
-
+        # Retorno de mensaje de éxito
         return {
             'effect': {
                 'fadeout': 'slow',
-                'message': msg,
-                'type': 'rainbow_man',
+                'message': f"Imported {imported} records.\nPosted {confirmed} records"
             }
         }
 
@@ -251,7 +214,7 @@ class ImportInvoice(models.TransientModel):
             return self.read_xlsx_file()
 
     def read_csv_file(self):
-        """Read a CSV file"""
+        """Leer un archivo CSV"""
         try:
             csv_data = base64.b64decode(self.file)
             data_file = io.StringIO(csv_data.decode("utf-8"))
@@ -303,24 +266,126 @@ class ImportInvoice(models.TransientModel):
         worksheet = workbook.add_worksheet("Invoice Import Template")
 
         # Estilo para encabezado
-        header_format = workbook.add_format({'bold': True, 'bg_color': '#D9D9D9'})
+        header_format = workbook.add_format({'bold': True, 'bg_color': '#D9D9D9', 'align': 'center', 'valign': 'vcenter'})
+        
+        # Escribir encabezados en la primera fila
         for col, label in enumerate(field_labels):
             worksheet.write(0, col, label, header_format)
 
+        # Añadir una línea de ejemplo
+        example_data = [
+            "DALMART",                # Socio
+            "2024-03-19 08:00:00",        # Fecha de Factura
+            "2024-04-19 08:00:00",        # Fecha de Vencimiento
+            "INV-12345",                  # Número
+            "Producto A",                 # Producto
+            "12345",                       # Código de Cuenta
+            "Unidad",                     # UoM
+            10.0,                          # Cantidad
+            100.0                          # Precio
+        ]
+
+        # Escribir los datos de ejemplo en la segunda fila
+        for col, value in enumerate(example_data):
+            worksheet.write(1, col, value)
+
+        # Ajustar automáticamente el tamaño de las columnas para que todo el texto sea visible
+        for col in range(len(field_labels)):
+            # Ajusta el ancho de las columnas al tamaño máximo entre el encabezado y los datos
+            column_width = max(len(field_labels[col]), max(len(str(example_data[col])) for example_data in [example_data]))
+            worksheet.set_column(col, col, column_width)
+
+        # Cerrar y preparar el archivo
         workbook.close()
         output.seek(0)
 
-        # Crear archivo adjunto en Odoo
+        # Crear adjunto en Odoo
         attachment = self.env['ir.attachment'].create({
-            'name': 'invoice_import_template.xlsx',
+            'name': 'plantilla_importación_facturas.xlsx',
             'type': 'binary',
             'datas': base64.b64encode(output.read()).decode(),
             'mimetype': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         })
 
-        # Retornar acción de descarga
+        # Retornar archivo para descarga
         return {
             'type': 'ir.actions.act_url',
             'url': f'/web/content/{attachment.id}?download=true',
             'target': 'self',
         }
+
+    def parsear_fecha(self, date_str, row_index, campo='Fecha de Factura'):
+        """
+        Parsea una fecha de manera flexible, manejando múltiples formatos.
+        
+        :param date_str: Cadena de fecha a parsear
+        :param row_index: Índice de la fila para mensajes de error
+        :param campo: Nombre del campo de fecha para mensajes de error
+        :return: Objeto de fecha parseado
+        """
+        if not date_str:
+            raise ValidationError(f"El campo '{campo}' está vacío en la fila {row_index}")
+        
+        # Convertir a cadena y eliminar espacios
+        date_str = str(date_str).strip()
+        
+        # Lista de formatos de fecha a intentar
+        formatos_fecha = [
+            '%Y-%m-%d',           # YYYY-MM-DD
+            '%d/%m/%Y',           # DD/MM/YYYY
+            '%m/%d/%Y',           # MM/DD/YYYY
+            '%Y/%m/%d',           # YYYY/MM/DD
+            '%d-%m-%Y',           # DD-MM-YYYY
+            '%Y.%m.%d',           # YYYY.MM.DD
+        ]
+        
+        # Intentar parsear con diferentes formatos
+        for formato in formatos_fecha:
+            try:
+                # Si hay un espacio, tomar solo la primera parte (fecha)
+                if ' ' in date_str:
+                    date_str = date_str.split()[0]
+                
+                fecha_parseada = datetime.datetime.strptime(date_str, formato).date()
+                return fecha_parseada
+            except ValueError:
+                continue
+        
+        # Si ningún formato funciona, lanzar error
+        raise ValidationError(f"Formato de {campo} inválido en la fila {row_index}. Formatos aceptados: YYYY-MM-DD, DD/MM/YYYY, etc.")
+
+    def validar_cliente(self, partner_name):
+        """
+        Busca el cliente en el sistema de Odoo por su nombre exacto o similar.
+        Si el cliente no existe o no se encuentra una coincidencia, lanza un error de validación.
+        
+        :param partner_name: Nombre exacto o similar del partner a buscar
+        :return: Registro del partner encontrado
+        """
+        # Buscar un partner exacto
+        partner = self.env['res.partner'].search([('name', '=', partner_name)], limit=1)
+        
+        if not partner:
+            # Si no se encuentra el partner exacto, buscar por nombre similar
+            partner = self.env['res.partner'].search([('name', 'ilike', partner_name)], limit=1)
+        
+        if not partner:
+            # Si no se encuentra ni exacto ni similar, arrojar un error
+            raise ValidationError(f"Usuario no encontrado: El socio '{partner_name}' no está registrado en el sistema.")
+        
+        return partner
+
+    def validar_producto(self, product_name):
+        """
+        Busca el producto en el sistema de Odoo por su nombre exacto.
+        Si el producto no existe, lanza un error de validación.
+        
+        :param product_name: Nombre exacto del producto a buscar
+        :return: Registro del producto encontrado
+        """
+        product = self.env['product.product'].search([('name', '=', product_name)], limit=1)
+        
+        if not product:
+            raise ValidationError(f"El producto '{product_name}' no está registrado en el sistema. No se puede procesar la factura.")
+        
+        return product

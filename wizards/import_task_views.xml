@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- ✅ Vista del wizard de Import Task -->
+    <!-- Vista del wizard de Import Task -->
     <record id="import_task_view_form" model="ir.ui.view">
         <field name="name">import.task.view.form</field>
         <field name="model">import.task</field>
@@ -36,7 +36,7 @@
         </field>
     </record>
 
-    <!-- ✅ Acción para abrir el wizard -->
+    <!-- Acción para abrir el wizard -->
     <record id="action_import_task" model="ir.actions.act_window">
         <field name="name">Import Task</field>
         <field name="res_model">import.task</field>

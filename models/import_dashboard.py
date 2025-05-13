@@ -1,5 +1,7 @@
 from odoo import fields, models, api
+import logging
 
+_logger = logging.getLogger(__name__)
 
 class ImportDashboard(models.Model):
     _name = "import.dashboard"
@@ -112,6 +114,58 @@ class ImportDashboard(models.Model):
         según el estado del checkbox en los ajustes.
         """
         self.search([('state', '=', 'wizard.producto')]).write({'show_product': enabled})
+
+    @api.model
+    def _install_import_dashboard(self):
+        """
+        Método que se ejecuta al instalar el módulo para asegurar que 
+        todas las tarjetas estén ocultas por defecto.
+        """
+        # Mapeo de estados a campos show_*
+        state_to_field = {
+            'account.move': 'show_account_move',
+            'import.attendance': 'show_attendance',
+            'import.bill.of.material': 'show_bom',
+            'import.invoice': 'show_invoice',
+            'import.payment': 'show_payment',
+            'import.task': 'show_task',
+            'import.pos.order': 'show_pos',
+            'import.purchase.order': 'show_purchase',
+            'wizard.producto': 'show_product',
+            'import.contact.wizard': 'show_contact'
+        }
+        
+        # Desactivar todas las tarjetas de importación
+        try:
+            # Buscar todos los registros de import.dashboard
+            records = self.search([])
+            
+            # Preparar un diccionario con todos los campos a False
+            update_values = {field: False for field in state_to_field.values()}
+            
+            # Actualizar todos los registros
+            if records:
+                records.write(update_values)
+            
+            # Limpiar cualquier configuración previa
+            config_params = self.env['ir.config_parameter'].sudo()
+            for key, _ in state_to_field.items():
+                config_key = f'import_dashboard.enable_{key.replace(".", "_")}_import'
+                config_params.set_param(config_key, 'False')
+            
+            return True
+        except Exception as e:
+            # Registrar cualquier error durante la instalación
+            _logger.error(f"Error en _install_import_dashboard: {str(e)}")
+            return False
+
+    def _register_hook(self):
+        """
+        Método para registrar el hook de instalación
+        """
+        # Aseguramos que las tarjetas estén ocultas al instalar el módulo.
+        self._install_import_dashboard()
+        return super()._register_hook()
 
     def action_open_attendance_wizard(self):
         """

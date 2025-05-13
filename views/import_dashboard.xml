@@ -81,23 +81,21 @@
                             </t>
 
                             <!-- Card: BOM -->
-                            <t t-if="record.show_bom.raw_value">
-                                <t t-if="record.state.raw_value == 'import.bill.of.material'">
-                                    <div class="oe_kanban_content">
-                                        <div class="oe_kanban_title d-flex justify-content-between align-items-center">
-                                            <span class="o_label" style="font-size: 20px;">Bill of Material</span>
-                                            <i class="fa fa-cogs" style="color: #f0ad4e; font-size: 36px; margin-right: 8px;"/>
-                                        </div>
-                                        <button
-                                            class="btn btn-sm btn-primary"
-                                            style="margin-top: 5%;"
-                                            name="%(action_import_bom)d"
-                                            type="action"
-                                        >
-                                            <span class="o_label">Import</span>
-                                        </button>
+                            <t t-if="record.show_bom.raw_value and record.state.raw_value == 'import.bill.of.material'">
+                                <div class="oe_kanban_content">
+                                    <div class="oe_kanban_title d-flex justify-content-between align-items-center">
+                                        <span class="o_label" style="font-size: 20px;">Bill of Material</span>
+                                        <i class="fa fa-cogs" style="color: #f0ad4e; font-size: 36px; margin-right: 8px;"/>
                                     </div>
-                                </t>
+                                    <button
+                                        class="btn btn-sm btn-primary"
+                                        style="margin-top: 5%;"
+                                        name="%(action_import_bom)d"
+                                        type="action"
+                                    >
+                                        <span class="o_label">Import</span>
+                                    </button>
+                                </div>
                             </t>
 
                             <!-- Card: Task -->
@@ -192,6 +190,34 @@
         </field>
     </record>
 
+    <!-- Vista Form -->
+    <record id="view_form_import_dashboard" model="ir.ui.view">
+        <field name="name">import.dashboard.form</field>
+        <field name="model">import.dashboard</field>
+        <field name="arch" type="xml">
+            <form string="Import Dashboard">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="state"/>
+                    </group>
+                    <group>
+                        <field name="show_account_move"/>
+                        <field name="show_attendance"/>
+                        <field name="show_bom"/>
+                        <field name="show_invoice"/>
+                        <field name="show_payment"/>
+                        <field name="show_task"/>
+                        <field name="show_pos"/>
+                        <field name="show_purchase"/>
+                        <field name="show_product"/>
+                        <field name="show_contact"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
     <!-- Acciones -->
     <record id="action_import_bom" model="ir.actions.act_window">
         <field name="name">Import BOM</field>
@@ -254,26 +280,8 @@
         <field name="res_model">import.dashboard</field>
         <field name="type">ir.actions.act_window</field>
         <field name="view_mode">kanban,form</field>
-        <field name="view_ids" eval="[(5, 0, 0),
-            (0, 0, {'view_mode': 'kanban', 'view_id': ref('view_import_dashboard_kanban')}),
-            (0, 0, {'view_mode': 'form', 'view_id': ref('view_form_import_dashboard')})]"/>
-        <field name="usage">menu</field>
-        <field name="context">{}</field>
-    </record>
-
-    <!-- Vista Form vacía (si decides usarla más adelante) -->
-    <record id="view_form_import_dashboard" model="ir.ui.view">
-        <field name="name">import.dashboard.form</field>
-        <field name="model">import.dashboard</field>
-        <field name="arch" type="xml">
-            <form string="Import Dashboard">
-                <sheet>
-                    <group>
-                        <field name="name"/>
-                    </group>
-                </sheet>
-            </form>
-        </field>
+        <field name="view_id" ref="view_import_dashboard_kanban"/>
+        <field name="search_view_id" ref="view_import_dashboard_kanban"/>
     </record>
 
     <!-- Menú -->

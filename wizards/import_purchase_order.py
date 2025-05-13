@@ -5,6 +5,9 @@ import csv
 import io
 import tempfile
 import xlrd
+import re
+import xlsxwriter
+from io import BytesIO
 from odoo import fields, models
 from odoo.exceptions import ValidationError
 import datetime
@@ -25,11 +28,11 @@ class ImportPurchaseOrder(models.TransientModel):
         help="Automatically confirm the quotation")
     order_number = fields.Selection(
         selection=[('from_system', 'From System'),
-                   ('from_file', 'From File')],
+                ('from_file', 'From File')],
         string='Reference', default='from_file', help="reference")
     import_product_by = fields.Selection(
         selection=[('name', 'Name'), ('default_code', 'Internal Reference'),
-                   ('barcode', 'Barcode')],
+                ('barcode', 'Barcode')],
         default="name", string="Import order by", help="import product")
 
     def action_test_import_purchase_order(self):
@@ -68,39 +71,6 @@ class ImportPurchaseOrder(models.TransientModel):
         if not self.order_number:
             raise ValidationError("Order number reference must be selected.")
 
-        # Validating Date formats (Order Deadline and Receipt Date)
-        if self.file_type == 'csv':
-            for row in rows:
-                if 'Order Deadline' in row:
-                    try:
-                        datetime.datetime.strptime(row['Order Deadline'], '%m/%d/%Y')
-                    except ValueError:
-                        raise ValidationError(f"Invalid date format for 'Order Deadline' in row {rows.index(row)+1}. Expected format: mm/dd/yyyy.")
-                
-                if 'Receipt Date' in row:
-                    try:
-                        datetime.datetime.strptime(row['Receipt Date'], '%m/%d/%Y')
-                    except ValueError:
-                        raise ValidationError(f"Invalid date format for 'Receipt Date' in row {rows.index(row)+1}. Expected format: mm/dd/yyyy.")
-        elif self.file_type == 'xlsx':
-            workbook = xlrd.open_workbook(fp.name)
-            sheet = workbook.sheet_by_index(0)
-            for row_index in range(1, sheet.nrows):
-                row = sheet.row_values(row_index)  # list
-                headers = sheet.row_values(0)  # list
-                data = dict(zip(headers, row))
-                if 'Order Deadline' in data:
-                    try:
-                        datetime.datetime.strptime(data['Order Deadline'], '%m/%d/%Y')
-                    except ValueError:
-                        raise ValidationError(f"Invalid date format for 'Order Deadline' in row {row_index+1}. Expected format: mm/dd/yyyy.")
-                
-                if 'Receipt Date' in data:
-                    try:
-                        datetime.datetime.strptime(data['Receipt Date'], '%m/%d/%Y')
-                    except ValueError:
-                        raise ValidationError(f"Invalid date format for 'Receipt Date' in row {row_index+1}. Expected format: mm/dd/yyyy.")
-        
         return {
             'type': 'ir.actions.client',
             'tag': 'display_notification',
@@ -112,46 +82,72 @@ class ImportPurchaseOrder(models.TransientModel):
         }
 
     def action_generate_template(self):
-        """Genera una plantilla Excel para importar órdenes de compra"""
-
-        import base64
-        from io import BytesIO
-        import xlsxwriter
+        """Genera una plantilla Excel para importar órdenes de compra con los encabezados correctos"""
 
         field_labels = [
             "Referencia de Pedido",        # Order Reference
-            "Proveedor",                 # Vendor
-            "Referencia del Proveedor",   # Vendor Reference
-            "Fecha Límite de Pedido",     # Order Deadline
-            "Fecha de Recepción",         # Receipt Date
-            "Representante de Compras",   # Purchase Representative
-            "Producto",                   # Product
-            "Referencia Interna",         # Internal Reference
-            "Código de Barras",           # Barcode
-            "Valores de Variante",        # Variant Values
-            "Descripción",                # Description
-            "Cantidad",                   # Quantity
-            "UoM",                        # Uom
-            "Precio Unitario",            # Unit Price
-            "Fecha de Entrega",           # Delivery Date
-            "Impuestos"                   # Taxes
+            "Proveedor",                   # Vendor
+            "Referencia del Proveedor",    # Vendor Reference
+            "Fecha Límite de Pedido",      # Order Deadline
+            "Fecha de Recepción",          # Receipt Date
+            "Representante de Compras",    # Purchase Representative
+            "Producto",                    # Product
+            "Referencia Interna",          # Internal Reference
+            "Código de Barras",            # Barcode
+            "Valores de Variante",         # Variant Values
+            "Descripción",                 # Description
+            "Cantidad",                    # Quantity
+            "UoM",                         # Uom
+            "Precio Unitario",             # Unit Price
+            "Fecha de Entrega",            # Delivery Date
+            "Impuestos"                    # Taxes
         ]
 
         output = BytesIO()
         workbook = xlsxwriter.Workbook(output, {'in_memory': True})
-        worksheet = workbook.add_worksheet("PO Import Template")
+        worksheet = workbook.add_worksheet("Plantilla Importación OC")
 
         # Estilo del encabezado
         header_format = workbook.add_format({'bold': True, 'bg_color': '#D9D9D9'})
         for col, label in enumerate(field_labels):
             worksheet.write(0, col, label, header_format)
 
+        # Añadir una fila de ejemplo
+        example_data = [
+            "PO12345",                # Order Reference
+            "Proveedor A",            # Vendor
+            "V12345",                 # Vendor Reference
+            "31/12/2024",             # Order Deadline
+            "15/01/2025",             # Receipt Date
+            "Juan Pérez",             # Purchase Representative
+            "Producto X",             # Product
+            "12345",                  # Internal Reference
+            "123456789012",           # Barcode
+            "Color: Rojo",            # Variant Values
+            "Descripción del Producto", # Description
+            "100",                    # Quantity
+            "Unidad",                 # UoM
+            "50",                     # Unit Price
+            "30/01/2025",             # Delivery Date
+            "IVA 21%"                 # Taxes
+        ]
+
+        # Escribir los datos de ejemplo en la segunda fila
+        for col, value in enumerate(example_data):
+            worksheet.write(1, col, value)
+
+        # Ajustar automáticamente el tamaño de las columnas para que todo el texto sea visible
+        for col in range(len(field_labels)):
+            column_width = max(len(field_labels[col]), max(len(str(example_data[col])) for example_data in [example_data]))
+            worksheet.set_column(col, col, column_width)
+
+        # Cerrar y preparar el archivo
         workbook.close()
         output.seek(0)
 
-        # Crear attachment
+        # Crear adjunto
         attachment = self.env['ir.attachment'].create({
-            'name': 'purchase_order_import_template.xlsx',
+            'name': 'plantilla_importación_orden_compras.xlsx',
             'type': 'binary',
             'datas': base64.b64encode(output.read()).decode(),
             'mimetype': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -171,38 +167,156 @@ class ImportPurchaseOrder(models.TransientModel):
         product_product = self.env['product.product']
         product_attribute = self.env['product.attribute']
         product_attribute_value = self.env['product.attribute.value']
-        product_template_attribute_value = self.env[
-            'product.template.attribute.value']
+        product_template_attribute_value = self.env['product.template.attribute.value']
         account_tax = self.env['account.tax']
         uom_uom = self.env['uom.uom']
+
+        # Mapeo de nombres de columnas flexibles
+        column_mapping = {
+            'order_reference': [
+                'Order Reference', 
+                'Referencia de Pedido', 
+                'Número de Pedido', 
+                'PO Number',
+                'Reference',
+                'Referencia'
+            ],
+            'vendor': [
+                'Vendor', 
+                'Proveedor', 
+                'Supplier',
+                'Nombre del Proveedor',
+                'Vendor Name',
+                'Supplier Name'
+            ],
+            'product': [
+                'Product', 
+                'Producto', 
+                'Product Name',
+                'Nombre del Producto',
+                'Item',
+                'Artículo'
+            ],
+            'quantity': [
+                'Quantity', 
+                'Cantidad', 
+                'Cant.',
+                'Qty',
+                'Amount',
+                'Monto'
+            ],
+            'unit_price': [
+                'Unit Price', 
+                'Precio Unitario', 
+                'Precio',
+                'Price',
+                'Cost',
+                'Costo'
+            ],
+            'vendor_reference': [
+                'Vendor Reference',
+                'Referencia del Proveedor',
+                'Supplier Reference',
+                'Reference Number'
+            ],
+            'order_deadline': [
+                'Order Deadline',
+                'Fecha Límite',
+                'Deadline',
+                'Due Date'
+            ],
+            'receipt_date': [
+                'Receipt Date',
+                'Fecha de Recepción',
+                'Delivery Date',
+                'Fecha de Entrega'
+            ],
+            'purchase_representative': [
+                'Purchase Representative',
+                'Representante de Compras',
+                'Buyer',
+                'Comprador'
+            ],
+            'internal_reference': [
+                'Internal Reference',
+                'Referencia Interna',
+                'SKU',
+                'Código Interno'
+            ],
+            'barcode': [
+                'Barcode',
+                'Código de Barras',
+                'EAN13',
+                'UPC'
+            ],
+            'variant_values': [
+                'Variant Values',
+                'Valores de Variante',
+                'Attributes',
+                'Atributos'
+            ],
+            'description': [
+                'Description',
+                'Descripción',
+                'Product Description',
+                'Descripción del Producto'
+            ],
+            'uom': [
+                'UoM',
+                'Unidad de Medida',
+                'Unit',
+                'Unidad'
+            ],
+            'taxes': [
+                'Taxes',
+                'Impuestos',
+                'Tax',
+                'VAT'
+            ]
+        }
+
+        def find_column(item, column_options):
+            """Buscar columna de manera flexible"""
+            for option in column_options:
+                for key in item.keys():
+                    if option.lower() == key.lower().strip():
+                        return key
+            return None
+
+        # Preparar archivo de importación
         if self.file_type == 'csv':
             try:
                 csv_data = base64.b64decode(self.file_upload)
                 data_file = io.StringIO(csv_data.decode("utf-8"))
                 data_file.seek(0)
                 csv_reader = csv.DictReader(data_file, delimiter=',')
-            except:
-                raise ValidationError(
-                    "File not Valid.\n\nPlease check the type and format "
-                    "of the file and try again!")
-            items = csv_reader
-        if self.file_type == 'xlsx':
+                items = list(csv_reader)
+            except Exception as e:
+                raise ValidationError(f"Error reading CSV file: {str(e)}")
+
+        elif self.file_type == 'xlsx':
             try:
                 fp = tempfile.NamedTemporaryFile(delete=False, suffix=".xlsx")
                 fp.write(binascii.a2b_base64(self.file_upload))
                 fp.seek(0)
                 workbook = xlrd.open_workbook(fp.name)
                 sheet = workbook.sheet_by_index(0)
-            except:
-                raise ValidationError(
-                    "File not Valid.\n\nPlease check the type and format of "
-                    "the file and try again!")
-            headers = sheet.row_values(0)  # list
-            data = []
-            for row_index in range(1, sheet.nrows):
-                row = sheet.row_values(row_index)  # list
-                data += [{k: v for k, v in zip(headers, row)}]
-            items = data
+                
+                # Obtener encabezados
+                headers = [str(sheet.cell_value(0, col)).strip() for col in range(sheet.ncols)]
+                
+                # Convertir datos
+                items = []
+                for row in range(1, sheet.nrows):
+                    row_data = {}
+                    for col, header in enumerate(headers):
+                        value = str(sheet.cell_value(row, col)).strip()
+                        row_data[header] = value
+                    items.append(row_data)
+            except Exception as e:
+                raise ValidationError(f"Error reading XLSX file: {str(e)}")
+
+        # Variables de seguimiento
         row = 0
         imported = 0
         confirmed = 0
@@ -210,307 +324,187 @@ class ImportPurchaseOrder(models.TransientModel):
         error_msg = ""
         vendor_added_msg = ""
         warning_msg = ""
-        if items:
-            for item in items:
-                row += 1
-                vals = {}
-                row_not_import_msg = "\n❌Row {rn} not imported.".format(rn=row)
-                import_error_msg = ""
-                missing_fields_msg = ""
-                fields_msg = "\n\t🚫Missing required field(s):"
-                vendor_msg = "\n🆕New Vendor(s) added:"
-                if not item.get('Order Reference'):
-                    if missing_fields_msg:
-                        missing_fields_msg += "\n\t\t\t\"❗Order Reference\" "
-                    else:
-                        missing_fields_msg += (fields_msg +
-                                               "\n\t\t\t\"❗Order Reference\"")
-                if item.get('Vendor'):
-                    vendor = res_partner.search([('name', '=', item['Vendor'])])
-                    if not vendor:
-                        vendor = res_partner.create({
-                            'name': item['Vendor']
-                        })
-                        vals['partner_id'] = vendor.id
-                        if vendor_added_msg:
-                            vendor_added_msg += (
-                                "\n\t\trow {rn}: {vendor}").format(
-                                rn=row, vendor=item['Vendor'])
-                        else:
-                            vendor_added_msg += (
-                                    vendor_msg + "\n\t\trow {rn}: "
-                                                 "\"{vendor}\"").format(
-                                rn=row, vendor=item['Vendor'])
-                    elif len(vendor) > 1:
-                        if import_error_msg:
-                            import_error_msg += ("\n\t\t❎Multiple Partners with"
-                                                 " name (%s) found!"
-                                                 % item['Vendor'])
-                        else:
-                            import_error_msg += row_not_import_msg + (
-                                    "\n\t\t❎Multiple Partners with name (%s) "
-                                    "found!"
-                                    % item['Vendor'])
-                    else:
-                        vals['partner_id'] = vendor.id
-                else:
-                    if missing_fields_msg:
-                        missing_fields_msg += "\n\t\t\t\"❗Vendor\""
-                    else:
-                        missing_fields_msg += (fields_msg +
-                                               "\n\t\t\t\"❗Vendor\"")
-                if import_error_msg:
-                    import_error_msg += missing_fields_msg
-                elif missing_fields_msg:
-                    import_error_msg += (row_not_import_msg +
-                                         missing_fields_msg)
-                if item.get('Vendor Reference'):
-                    vals['partner_ref'] = item['Vendor Reference']
-                if item.get('Order Deadline'):
-                    date = item['Order Deadline']
-                    try:
-                        order_deadline = datetime.datetime.strptime(
-                            date, '%m/%d/%Y')
-                        vals['date_order'] = order_deadline
-                    except:
-                        if import_error_msg:
-                            import_error_msg += ("\n\t\t❎Please check the Order"
-                                                 " Deadline and format is "
-                                                 "mm/dd/yyyy")
-                        else:
-                            import_error_msg += row_not_import_msg + (
-                                "\n\t\t❎Please check the Order Deadline and "
-                                "format is mm/dd/yyyy")
-                if item.get('Receipt Date'):
-                    date = item['Receipt Date']
-                    try:
-                        receipt_date = datetime.datetime.strptime(
-                            date, '%m/%d/%Y')
-                        vals['date_planned'] = receipt_date
-                    except:
-                        if import_error_msg:
-                            import_error_msg += ("\n\t\t❎Please check the "
-                                                 "Receipt Date and format is "
-                                                 "mm/dd/yyyy")
-                        else:
-                            import_error_msg += row_not_import_msg + (
-                                "\n\t\t❎Please check the Receipt Date and "
-                                "format is mm/dd/yyyy")
-                if item.get('Purchase Representative'):
-                    purchase_representative = res_users.search(
-                        [('name', '=', item['Purchase Representative'])])
-                    if purchase_representative:
-                        vals['user_id'] = purchase_representative.id
-                if import_error_msg:
-                    error_msg += import_error_msg
-                    continue
-                purchaseorder = purchase_order.search(
-                    [('name', '=', item.get('Order Reference'))])
-                if purchaseorder:
-                    if len(purchaseorder) > 1:
-                        error_msg += row_not_import_msg + (
-                                "\n\t❎Multiple purchase order with same Order "
-                                "Reference(%s) found!"
-                                % (item.get('Order Reference')))
-                        continue
-                    if vals and purchaseorder.state in ['draft', 'sent']:
-                        purchaseorder.write(vals)
-                elif not purchaseorder:
-                    if self.order_number == 'from_system':
-                        purchaseorder = purchase_order.create(vals)
-                    if self.order_number == 'from_file':
-                        vals['name'] = item.get('Order Reference')
-                        purchaseorder = purchase_order.create(vals)
-                line_vals = {}
-                pro_vals = {}
-                if item.get('Description'):
-                    line_vals['name'] = item['Description']
-                if item.get('Delivery Date'):
-                    date = item['Delivery Date']
-                    try:
-                        delivery_date = datetime.datetime.strptime(
-                            date, '%m/%d/%Y')
-                        line_vals['date_planned'] = delivery_date
-                    except:
-                        if import_error_msg:
-                            import_error_msg += ("\n\t\t❎Please check the "
-                                                 "Delivery Date and format is "
-                                                 "mm/dd/yyyy")
-                        else:
-                            import_error_msg += row_not_import_msg + (
-                                "\n\t\t❎Please check the Delivery Date and "
-                                "format is mm/dd/yyyy")
-                if item.get('Quantity'):
-                    line_vals['product_qty'] = item['Quantity']
-                if item.get('Uom'):
-                    uom = uom_uom.search([('name', '=', item['Uom'])])
-                    if uom:
-                        pro_vals['uom_id'] = line_vals['product_uom'] = uom.id
-                if item.get('Unit Price'):
-                    pro_vals['lst_price'] = line_vals['price_unit'] = item[
-                        'Unit Price']
-                if item.get('Taxes'):
-                    tax_name = item['Taxes']
-                    tax_amount = (re.findall(r"(\d+)%", tax_name))[0]
-                    tax = account_tax.search(
-                        [('name', '=', tax_name),
-                         ('type_tax_use', '=', 'purchase')], limit=1)
-                    if not tax:
-                        tax = account_tax.create({
-                            'name': tax_name,
-                            'type_tax_use': 'purchase',
-                            'amount': tax_amount if tax_amount else 0.0
-                        })
-                    pro_vals['taxes_id'] = line_vals['taxes_id'] = [tax.id]
-                if item.get('Product'):
-                    pro_vals['name'] = item['Product']
-                if item.get('Internal Reference'):
-                    pro_vals['default_code'] = item['Internal Reference']
-                if self.import_product_by == 'name':
-                    if item.get('Product'):
-                        product = product_product.search([('name', '=',
-                                                           item['Product'])])
-                        if not product:
-                            product = product_product.create(pro_vals)
-                        if len(product) > 1:
-                            if item.get('Variant Values'):
-                                pro_tmpl_id = product.mapped('product_tmpl_id')
-                                if len(pro_tmpl_id) > 1:
-                                    error_msg += row_not_import_msg + (
-                                            "\n\t❎Multiple Product records are "
-                                            "linked with the product variant "
-                                            "\"%s\""
-                                            "." % (item['Product']))
-                                    continue
-                                variant_values = item['Variant Values'].split(
-                                    ',')
-                                variant_value_ids = []
-                                for var in variant_values:
-                                    k_v = var.partition(":")
-                                    attr = k_v[0].strip()
-                                    attr_val = k_v[2].strip()
-                                    var_attr_ids = product_attribute.search(
-                                        [('name', '=', attr)]).ids
-                                    var_attr_val_ids = (product_attribute_value
-                                                        .search(
-                                        [('name', '=', attr_val),
-                                         ('attribute_id', 'in',
-                                          var_attr_ids)]).ids)
-                                    pro_temp_attr_val_id = (
-                                        product_template_attribute_value.search(
-                                        [('product_attribute_value_id', 'in',
-                                          var_attr_val_ids),
-                                         ('product_tmpl_id', '=',
-                                          pro_tmpl_id.id)]).id)
-                                    variant_value_ids += [pro_temp_attr_val_id]
-                                if variant_value_ids:
-                                    product = product.filtered(
-                                        lambda p:
-                                        p.product_template_variant_value_ids.ids
-                                        == variant_value_ids)
-                                else:
-                                    error_msg += row_not_import_msg + (
-                                            "\n\t❎Product variant with variant "
-                                            "values \"%s\" not found."
-                                            % (item['Variant Values']))
-                                    continue
-                                if len(product) != 1:
-                                    error_msg += row_not_import_msg + (
-                                            "\n\t❎Multiple variants with same "
-                                            "Variant Values \"%s\" found. "
-                                            "Please check if the product "
-                                            "Variant Values are unique."
-                                            % (item['Variant Values']))
-                                    continue
-                            else:
-                                error_msg += row_not_import_msg + (
-                                        "\n\t⚠ Multiple Products with same "
-                                        "Name \"%s\" found. Please "
-                                        "provide unique product \"Variant "
-                                        "Values\" to filter the records."
-                                        % (item['Product']))
-                                continue
-                    else:
-                        error_msg += row_not_import_msg + (
-                            "\n\t❎Product name missing in file!")
-                        continue
-                if self.import_product_by == 'default_code':
-                    if item.get('Internal Reference'):
-                        product = product_product.search(
-                            [('default_code', '=', item['Internal Reference'])])
-                        if not product:
-                            if not item.get('Product'):
-                                warning_msg += ("\nℹA Product is created with "
-                                                "\"Internal Reference\" as "
-                                                "product name since \"Product\""
-                                                " name is missing at row %d."
-                                                % row)
-                                pro_vals['name'] = item['Internal Reference']
-                            product = product_product.create(pro_vals)
-                        if len(product) > 1:
-                            error_msg += row_not_import_msg + (
-                                    "\n\t❎Multiple Products with same Internal "
-                                    "Reference(%s) found!"
-                                    % (item['Internal Reference']))
-                            continue
-                    else:
-                        error_msg += row_not_import_msg + (
-                            "\n\t❎Internal Reference missing in file!")
-                        continue
-                if self.import_product_by == 'barcode':
-                    if item.get('Barcode'):
-                        product = product_product.search([('barcode', '=',
-                                                           item['Barcode'])])
-                        if not product:
-                            if not item.get('Product'):
-                                warning_msg += (
-                                        "\nℹNo value under \"Product\" at "
-                                        "row %d, thus added \"Barcode\" as "
-                                        "product name" % row)
-                                pro_vals['name'] = item['Barcode']
-                                product = product_product.create(pro_vals)
-                        if len(product) > 1:
-                            error_msg += row_not_import_msg + (
-                                    "\n\t❎Other Product(s) with same "
-                                    "Barcode (%s) found!" % item['Barcode'])
-                            continue
-                    else:
-                        error_msg += row_not_import_msg + (
-                            "\n\t❎Barcode missing in file!")
-                        continue
-                if self.import_product_by and product:
-                    line_vals['product_id'] = product.id
-                    purchaseorder.write({
-                        'order_line': [(0, 0, line_vals)]
+
+        # Procesar cada elemento
+        for item in items:
+            row += 1
+
+            # Encontrar columnas flexiblemente
+            order_ref_col = find_column(item, column_mapping['order_reference'])
+            vendor_col = find_column(item, column_mapping['vendor'])
+            product_col = find_column(item, column_mapping['product'])
+            quantity_col = find_column(item, column_mapping['quantity'])
+            price_col = find_column(item, column_mapping['unit_price'])
+            vendor_ref_col = find_column(item, column_mapping['vendor_reference'])
+            deadline_col = find_column(item, column_mapping['order_deadline'])
+            receipt_col = find_column(item, column_mapping['receipt_date'])
+            rep_col = find_column(item, column_mapping['purchase_representative'])
+
+            # Validar campos requeridos
+            if not order_ref_col or not vendor_col:
+                error_msg += f"\n❌Fila {row} no importada. Faltan columnas requeridas (Referencia o Proveedor)."
+                continue
+
+            # Obtener valores
+            order_reference = item.get(order_ref_col, '').strip()
+            vendor_name = item.get(vendor_col, '').strip()
+            vendor_reference = item.get(vendor_ref_col, '').strip() if vendor_ref_col else ''
+            order_deadline = item.get(deadline_col, '').strip() if deadline_col else ''
+            receipt_date = item.get(receipt_col, '').strip() if receipt_col else ''
+            purchase_rep = item.get(rep_col, '').strip() if rep_col else ''
+
+            # Validar que los campos no estén vacíos
+            if not order_reference or not vendor_name:
+                error_msg += f"\n❌Fila {row} no importada. Referencia de Pedido o Proveedor vacíos."
+                continue
+
+            # Procesar proveedor
+            vendor = res_partner.search([
+                '|', 
+                ('name', '=', vendor_name),
+                ('name', 'ilike', vendor_name)
+            ], limit=1)
+
+            if not vendor:
+                try:
+                    vendor = res_partner.create({
+                        'name': vendor_name,
+                        'supplier_rank': 1,  # Marcar como proveedor
+                        'company_type': 'company'
                     })
-                imported += 1
-                imported_purchaseorders += [purchaseorder]
-            if self.auto_confirm_quot and imported_purchaseorders:
-                for po in imported_purchaseorders:
-                    po.button_confirm()
-                confirmed += 1
-            if error_msg:
-                error_msg = "\n\n⚠ WARNING ⚠" + error_msg
-                error_message = self.env['import.message'].create(
-                    {'message': error_msg})
-                return {
-                    'name': 'Error!',
-                    'type': 'ir.actions.act_window',
-                    'view_mode': 'form',
-                    'res_model': 'import.message',
-                    'res_id': error_message.id,
-                    'target': 'new'
+                    vendor_added_msg += f"\n\t🆕 Nuevo proveedor creado: {vendor_name}"
+                except Exception as e:
+                    error_msg += f"\n❌Fila {row} no importada. Error creando proveedor: {str(e)}"
+                    continue
+
+            # Crear orden de compra
+            try:
+                vals = {
+                    'partner_id': vendor.id,
+                    'name': order_reference,
+                    'partner_ref': vendor_reference,
                 }
 
-            msg = (("Imported %d records.\nConfirmed %d records"
-                    % (imported, confirmed)) + vendor_added_msg + warning_msg)
-            message = self.env['import.message'].create(
-                {'message': msg})
-            if message:
-                return {
-                    'effect': {
-                        'fadeout': 'slow',
-                        'message': msg,
-                        'type': 'rainbow_man',
-                    }
+                # Agregar fecha límite si existe
+                if order_deadline:
+                    try:
+                        vals['date_order'] = datetime.datetime.strptime(order_deadline, '%d/%m/%Y')
+                    except ValueError:
+                        warning_msg += f"\n⚠️ Fila {row}: Formato de fecha límite inválido, se usará la fecha actual."
+
+                # Agregar fecha de recepción si existe
+                if receipt_date:
+                    try:
+                        vals['date_planned'] = datetime.datetime.strptime(receipt_date, '%d/%m/%Y')
+                    except ValueError:
+                        warning_msg += f"\n⚠️ Fila {row}: Formato de fecha de recepción inválido, se usará la fecha actual."
+
+                # Agregar representante de compras si existe
+                if purchase_rep:
+                    user = res_users.search([('name', 'ilike', purchase_rep)], limit=1)
+                    if user:
+                        vals['user_id'] = user.id
+                    else:
+                        warning_msg += f"\n⚠️ Fila {row}: Representante de compras no encontrado."
+
+                # Buscar si ya existe una orden con esta referencia
+                existing_po = purchase_order.search([('name', '=', order_reference)])
+                
+                if existing_po:
+                    existing_po.write(vals)
+                    purchaseorder = existing_po[0]
+                else:
+                    purchaseorder = purchase_order.create(vals)
+
+                # Procesar las líneas de productos
+                if not all([product_col, quantity_col, price_col]):
+                    error_msg += f"\n❌Fila {row} no importada. Faltan columnas de producto."
+                    continue
+
+                product_name = item.get(product_col, '').strip()
+                quantity = item.get(quantity_col, '').strip()
+                unit_price = item.get(price_col, '').strip()
+
+                # Validar que la cantidad y el precio sean números válidos
+                try:
+                    quantity = float(quantity)
+                    unit_price = float(unit_price)
+                except ValueError:
+                    error_msg += f"\n❌Fila {row} no importada. La cantidad o el precio no son válidos."
+                    continue
+
+                # Buscar producto según el método de importación seleccionado
+                domain = []
+                if self.import_product_by == 'name':
+                    domain = [('name', '=', product_name)]
+                elif self.import_product_by == 'default_code':
+                    domain = [('default_code', '=', product_name)]
+                elif self.import_product_by == 'barcode':
+                    domain = [('barcode', '=', product_name)]
+
+                product = product_product.search(domain, limit=1)
+
+                if not product:
+                    try:
+                        product = product_product.create({
+                            'name': product_name,
+                            'type': 'product',
+                            'purchase_ok': True,
+                        })
+                        warning_msg += f"\n\t🆕 Nuevo producto creado: {product_name}"
+                    except Exception as e:
+                        error_msg += f"\n❌Fila {row} no importada. Error creando producto: {str(e)}"
+                        continue
+
+                # Crear la línea de la orden de compra
+                self.env['purchase.order.line'].create({
+                    'order_id': purchaseorder.id,
+                    'product_id': product.id,
+                    'product_qty': quantity,
+                    'price_unit': unit_price,
+                    'name': product.name,
+                    'date_planned': vals.get('date_planned', fields.Datetime.now()),
+                    'product_uom': product.uom_po_id.id or product.uom_id.id,
+                })
+
+                imported += 1
+                imported_purchaseorders.append(purchaseorder)
+
+            except Exception as e:
+                error_msg += f"\n❌Fila {row} no importada. Error: {str(e)}"
+                continue
+
+        # Confirmación automática si está habilitada
+        if self.auto_confirm_quot and imported_purchaseorders:
+            for po in imported_purchaseorders:
+                try:
+                    po.button_confirm()
+                    confirmed += 1
+                except Exception as e:
+                    warning_msg += f"\n⚠️ No se pudo confirmar la orden {po.name}: {str(e)}"
+
+        # Generar mensaje de resultado
+        if error_msg:
+            error_msg = "\n\n⚠ ADVERTENCIA ⚠" + error_msg
+            error_message = self.env['import.message'].create({'message': error_msg})
+            return {
+                'name': '¡Error!',
+                'type': 'ir.actions.act_window',
+                'view_mode': 'form',
+                'res_model': 'import.message',
+                'res_id': error_message.id,
+                'target': 'new'
+            }
+
+        msg = (f"Se importaron {imported} registros.\nSe confirmaron {confirmed} registros" 
+               + vendor_added_msg + warning_msg)
+        message = self.env['import.message'].create({'message': msg})
+        
+        if message:
+            return {
+                'effect': {
+                    'fadeout': 'slow',
+                    'message': msg,
+                    'type': 'rainbow_man',
                 }
+            }

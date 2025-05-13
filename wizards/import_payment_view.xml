@@ -16,9 +16,13 @@
                     </group>
                 </sheet>
                 <footer>
+                    <!-- Action to import the payment -->
                     <button name="action_import_payment" type="object" string="Import" class="btn btn-primary"/>
+                    <!-- Action to test the import -->
                     <button name="action_test_import_payment" type="object" string="Test" class="btn-primary"/>
+                    <!-- Action to generate a template -->
                     <button string="Descargar Plantilla" class="btn btn-sm btn-primary" type="object" name="action_generate_template"/>
+                    <!-- Action to cancel -->
                     <button string="Cancel" special="cancel" class="btn-secondary"/>
                 </footer>
             </form>

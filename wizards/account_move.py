@@ -139,8 +139,11 @@ class AccountMove(models.TransientModel):
                         error_message += str(e) + ", on row %s \n" % row
                         continue
 
-                    # Omitimos la búsqueda de tax_support ya que el modelo no existe
-                    tax_support_id = False
+                    # Buscamos el impuesto en el modelo `account.tax`, basado en el valor de `tax_support` que recibes del archivo XLSX.
+                    tax_ids = False
+                    if tax_support:
+                        # Buscar el impuesto por su nombre (suponiendo que `tax_support` es el nombre o código del impuesto)
+                        tax_ids = self.env['account.tax'].search([('name', 'ilike', tax_support)], limit=1)
 
                     # Si no encontramos el modelo de tipo de documento, lo omitimos
                     doc_type_id = False
@@ -159,7 +162,6 @@ class AccountMove(models.TransientModel):
                         "partner_id": partner_id.id,
                         "invoice_date": date,
                         "invoice_date_due": end_date,
-                        "tax_support": tax_support_id.id if tax_support_id else False,
                         "voucher_type_ats": doc_type_id.id if doc_type_id else False,
                         "is_imported": True,
                     }
@@ -205,6 +207,7 @@ class AccountMove(models.TransientModel):
                             )
                             continue
 
+                    # Crear las líneas de la factura con el impuesto correspondiente.
                     invoice_lines.append(
                         (
                             0,
@@ -215,6 +218,7 @@ class AccountMove(models.TransientModel):
                                 "price_unit": float(price),
                                 "name": str(label) if label else product_id.display_name,
                                 "account_id": account_id.id if account_id else False,
+                                "tax_ids": [(6, 0, [tax_ids.id])] if tax_ids else False,  # Asociamos el impuesto en la línea
                             },
                         )
                     )

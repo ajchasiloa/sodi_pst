@@ -1,0 +1,1330 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* import_dashboard
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 17.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-04-29 22:01+0000\n"
+"PO-Revision-Date: 2025-04-29 22:01+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: import_dashboard
+#: model_terms:ir.ui.view,arch_db:import_dashboard.view_import_dashboard_kanban
+msgid ""
+"<span class=\"o_label\" style=\"font-size: 20px;\">Attendance</span>\n"
+"                                        <i class=\"fa fa-calendar-check-o\" style=\"color: #3c763d; font-size: 36px; margin-right: 8px;\"/>"
+msgstr ""
+
+#. module: import_dashboard
+#: model_terms:ir.ui.view,arch_db:import_dashboard.view_import_dashboard_kanban
+msgid ""
+"<span class=\"o_label\" style=\"font-size: 20px;\">Bill of Material</span>\n"
+"                                            <i class=\"fa fa-cogs\" style=\"color: #f0ad4e; font-size: 36px; margin-right: 8px;\"/>"
+msgstr ""
+
+#. module: import_dashboard
+#: model_terms:ir.ui.view,arch_db:import_dashboard.view_import_dashboard_kanban
+msgid ""
+"<span class=\"o_label\" style=\"font-size: 20px;\">Contactos</span>\n"
+"                                        <i class=\"fa fa-address-book\" style=\"color: #ff7043; font-size: 36px; margin-right: 8px;\"/>"
+msgstr ""
+
+#. module: import_dashboard
+#: model_terms:ir.ui.view,arch_db:import_dashboard.view_import_dashboard_kanban
+msgid ""
+"<span class=\"o_label\" style=\"font-size: 20px;\">Invoice / Bills</span>\n"
+"                                        <i class=\"fa fa-credit-card\" style=\"color: #4a90e2; font-size: 36px; margin-right: 8px;\"/>"
+msgstr ""
+
+#. module: import_dashboard
+#: model_terms:ir.ui.view,arch_db:import_dashboard.view_import_dashboard_kanban
+msgid ""
+"<span class=\"o_label\" style=\"font-size: 20px;\">Invoice Import</span>\n"
+"                                    <i class=\"fa fa-file-invoice\" style=\"color: #007bff; font-size: 36px; margin-right: 8px;\"/>"
+msgstr ""
+
+#. module: import_dashboard
+#: model_terms:ir.ui.view,arch_db:import_dashboard.view_import_dashboard_kanban
+msgid ""
+"<span class=\"o_label\" style=\"font-size: 20px;\">POS</span>\n"
+"                                        <i class=\"fa fa-cash-register\" style=\"color: #ff6600; font-size: 36px; margin-right: 8px;\"/>"
+msgstr ""
+
+#. module: import_dashboard
+#: model_terms:ir.ui.view,arch_db:import_dashboard.view_import_dashboard_kanban
+msgid ""
+"<span class=\"o_label\" style=\"font-size: 20px;\">Payment Import</span>\n"
+"                                    <i class=\"fa fa-credit-card\" style=\"color: #28a745; font-size: 36px; margin-right: 8px;\"/>"
+msgstr ""
+
+#. module: import_dashboard
+#: model_terms:ir.ui.view,arch_db:import_dashboard.view_import_dashboard_kanban
+msgid ""
+"<span class=\"o_label\" style=\"font-size: 20px;\">Productos</span>\n"
+"                                        <i class=\"fa fa-box-open\" style=\"color: #FFA500; font-size: 36px; margin-right: 8px;\"/>"
+msgstr ""
+
+#. module: import_dashboard
+#: model_terms:ir.ui.view,arch_db:import_dashboard.view_import_dashboard_kanban
+msgid ""
+"<span class=\"o_label\" style=\"font-size: 20px;\">Purchase Order</span>\n"
+"                                        <i class=\"fa fa-shopping-cart\" style=\"color: #00aaff; font-size: 36px; margin-right: 8px;\"/>"
+msgstr ""
+
+#. module: import_dashboard
+#: model_terms:ir.ui.view,arch_db:import_dashboard.view_import_dashboard_kanban
+msgid ""
+"<span class=\"o_label\" style=\"font-size: 20px;\">Task</span>\n"
+"                                        <i class=\"fa fa-tasks\" style=\"color: #6f42c1; font-size: 36px; margin-right: 8px;\"/>"
+msgstr ""
+
+#. module: import_dashboard
+#: model_terms:ir.ui.view,arch_db:import_dashboard.view_import_dashboard_kanban
+msgid "<span class=\"o_label\">Import</span>"
+msgstr ""
+
+#. module: import_dashboard
+#: model_terms:ir.ui.view,arch_db:import_dashboard.view_import_dashboard_kanban
+msgid "<span class=\"o_label\">Importar</span>"
+msgstr ""
+
+
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_res_config_settings__enable_pos_import
+msgid "Activar Importación POS"
+msgstr "Activar Importación POS"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_res_config_settings__enable_attendance_import
+msgid "Activar Importación de Asistencia"
+msgstr "Activar Importación de Asistencia"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_res_config_settings__enable_bom_import
+msgid "Activar Importación de BOM"
+msgstr "Activar Importación de BOM"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_res_config_settings__enable_contact_import
+msgid "Activar Importación de Contactos"
+msgstr "Activar Importación de Contactos"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_res_config_settings__enable_account_move_import
+#: model:ir.model.fields,field_description:import_dashboard.field_res_config_settings__enable_invoice_import
+msgid "Activar Importación de Facturas"
+msgstr "Activar Importación de Facturas"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_res_config_settings__enable_payment_import
+msgid "Activar Importación de Pagos"
+msgstr "Activar Importación de Pagos"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_res_config_settings__enable_task_import
+msgid "Activar Importación de Tareas"
+msgstr "Activar Importación de Tareas"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_res_config_settings__show_purchase
+msgid "Activar Importación de Órdenes de Compra"
+msgstr "Activar Importación de Órdenes de Compra"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_res_config_settings__enable_product_import
+msgid "Activar importación de productos"
+msgstr "Activar importación de productos"
+
+#. module: import_dashboard
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_bill_of_material__bom_component__add
+msgid "Add Components"
+msgstr "Agregar Componentes"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_import_contact_wizard__file
+#: model:ir.model.fields,field_description:import_dashboard.field_wizard_producto__file
+msgid "Archivo"
+msgstr "Archivo"
+
+#. module: import_dashboard
+#: model_terms:ir.ui.view,arch_db:import_dashboard.view_wizard_producto_form
+msgid "Archivos .csv o .xlsx"
+msgstr "Archivos .csv o .xlsx"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_import_task__user_id
+msgid "Assigned to"
+msgstr "Asignado a"
+
+#. module: import_dashboard
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_dashboard__state__import_attendance
+msgid "Attendance"
+msgstr "Asistencia"
+
+#. module: import_dashboard
+#: model:ir.model,name:import_dashboard.model_import_attendance
+msgid "Attendance Import"
+msgstr "Importación de Asistencia"
+
+#. module: import_dashboard
+#: model:ir.model.fields,help:import_dashboard.field_import_purchase_order__auto_confirm_quot
+msgid "Automatically confirm the quotation"
+msgstr "Confirmar automáticamente la cotización"
+
+#. module: import_dashboard
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_dashboard__state__import_bill_of_material
+msgid "BOM"
+msgstr "BOM"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_import_bill_of_material__bom_component
+msgid "BOM Component"
+msgstr "Componente BOM"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_import_bill_of_material__bom_type
+msgid "BOM Type"
+msgstr "Tipo de BOM"
+
+#. module: import_dashboard
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_invoice__journal__bank
+msgid "Bank"
+msgstr "Banco"
+
+#. module: import_dashboard
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_bill_of_material__import_product_by__barcode
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_invoice__import_product_by__barcode
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_pos_order__import_product_by__barcode
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_purchase_order__import_product_by__barcode
+msgid "Barcode"
+msgstr "Código de barras"
+
+#. module: import_dashboard
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_invoice__type__in_invoice
+msgid "Bill"
+msgstr "Factura"
+
+#. module: import_dashboard
+#: model:ir.model,name:import_dashboard.model_import_bill_of_material
+msgid "Bill of Material Import"
+msgstr "Importación de Lista de Materiales (BOM)"
+
+#. module: import_dashboard
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_bill_of_material__bom_type__both
+msgid "Both"
+msgstr "Ambos"
+
+#. module: import_dashboard
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_attendance__file_type__csv
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_bill_of_material__file_type__csv
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_invoice__file_type__csv
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_payment__file_type__csv
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_pos_order__file_type__csv
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_purchase_order__file_type__csv
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_task__file_type__csv
+msgid "CSV File"
+msgstr "Archivo CSV"
+
+#. module: import_dashboard
+#: model_terms:ir.ui.view,arch_db:import_dashboard.import_attendance_view_form
+#: model_terms:ir.ui.view,arch_db:import_dashboard.import_bill_of_material_view_form
+#: model_terms:ir.ui.view,arch_db:import_dashboard.import_invoice_view_form
+#: model_terms:ir.ui.view,arch_db:import_dashboard.import_payment_view_form
+#: model_terms:ir.ui.view,arch_db:import_dashboard.import_pos_order_view_form
+#: model_terms:ir.ui.view,arch_db:import_dashboard.import_purchase_order_view_form
+#: model_terms:ir.ui.view,arch_db:import_dashboard.import_task_view_form
+#: model_terms:ir.ui.view,arch_db:import_dashboard.wizard_import_account_move_form
+msgid "Cancel"
+msgstr "Cancelar"
+
+#. module: import_dashboard
+#: model_terms:ir.ui.view,arch_db:import_dashboard.view_import_contact_wizard_form
+#: model_terms:ir.ui.view,arch_db:import_dashboard.view_wizard_producto_form
+msgid "Cancelar"
+msgstr "Cancelar"
+
+#. module: import_dashboard
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_invoice__journal__cash
+msgid "Cash"
+msgstr "Efectivo"
+
+#. module: import_dashboard
+#: model:ir.model,name:import_dashboard.model_res_config_settings
+msgid "Config Settings"
+msgstr "Ajustes de configuración"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_import_purchase_order__auto_confirm_quot
+msgid "Confirm Quotation Automatically"
+msgstr "Confirmar cotización automáticamente"
+
+#. module: import_dashboard
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_dashboard__state__import_contact_wizard
+msgid "Contact Import"
+msgstr "Importación de Contactos"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_import_account_move_wizard__create_uid
+#: model:ir.model.fields,field_description:import_dashboard.field_import_attendance__create_uid
+#: model:ir.model.fields,field_description:import_dashboard.field_import_bill_of_material__create_uid
+#: model:ir.model.fields,field_description:import_dashboard.field_import_contact_wizard__create_uid
+#: model:ir.model.fields,field_description:import_dashboard.field_import_dashboard__create_uid
+#: model:ir.model.fields,field_description:import_dashboard.field_import_invoice__create_uid
+#: model:ir.model.fields,field_description:import_dashboard.field_import_message__create_uid
+#: model:ir.model.fields,field_description:import_dashboard.field_import_payment__create_uid
+#: model:ir.model.fields,field_description:import_dashboard.field_import_pos_order__create_uid
+#: model:ir.model.fields,field_description:import_dashboard.field_import_purchase_order__create_uid
+#: model:ir.model.fields,field_description:import_dashboard.field_import_task__create_uid
+#: model:ir.model.fields,field_description:import_dashboard.field_wizard_producto__create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_import_account_move_wizard__create_date
+#: model:ir.model.fields,field_description:import_dashboard.field_import_attendance__create_date
+#: model:ir.model.fields,field_description:import_dashboard.field_import_bill_of_material__create_date
+#: model:ir.model.fields,field_description:import_dashboard.field_import_contact_wizard__create_date
+#: model:ir.model.fields,field_description:import_dashboard.field_import_dashboard__create_date
+#: model:ir.model.fields,field_description:import_dashboard.field_import_invoice__create_date
+#: model:ir.model.fields,field_description:import_dashboard.field_import_message__create_date
+#: model:ir.model.fields,field_description:import_dashboard.field_import_payment__create_date
+#: model:ir.model.fields,field_description:import_dashboard.field_import_pos_order__create_date
+#: model:ir.model.fields,field_description:import_dashboard.field_import_purchase_order__create_date
+#: model:ir.model.fields,field_description:import_dashboard.field_import_task__create_date
+#: model:ir.model.fields,field_description:import_dashboard.field_wizard_producto__create_date
+msgid "Created on"
+msgstr "Creado en"
+
+#. module: import_dashboard
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_invoice__type__out_refund
+msgid "Credit Note"
+msgstr "Nota de Crédito"
+
+#. module: import_dashboard
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_account_move_wizard__move_type__out_invoice
+msgid "Customer Invoice"
+msgstr "Factura de Cliente"
+
+#. module: import_dashboard
+#. odoo-python
+#: code:addons/import_dashboard/wizards/contact_import_wizard.py:0
+#, python-format
+msgid "Debe subir un archivo."
+msgstr "You must upload a file."
+
+#. module: import_dashboard
+#: model_terms:ir.ui.view,arch_db:import_dashboard.import_attendance_view_form
+#: model_terms:ir.ui.view,arch_db:import_dashboard.import_bill_of_material_view_form
+#: model_terms:ir.ui.view,arch_db:import_dashboard.import_invoice_view_form
+#: model_terms:ir.ui.view,arch_db:import_dashboard.import_payment_view_form
+#: model_terms:ir.ui.view,arch_db:import_dashboard.import_pos_order_view_form
+#: model_terms:ir.ui.view,arch_db:import_dashboard.import_purchase_order_view_form
+#: model_terms:ir.ui.view,arch_db:import_dashboard.import_task_view_form
+msgid "Descargar Plantilla"
+msgstr "Descargar Plantilla"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_import_account_move_wizard__display_name
+#: model:ir.model.fields,field_description:import_dashboard.field_import_attendance__display_name
+#: model:ir.model.fields,field_description:import_dashboard.field_import_bill_of_material__display_name
+#: model:ir.model.fields,field_description:import_dashboard.field_import_contact_wizard__display_name
+#: model:ir.model.fields,field_description:import_dashboard.field_import_dashboard__display_name
+#: model:ir.model.fields,field_description:import_dashboard.field_import_invoice__display_name
+#: model:ir.model.fields,field_description:import_dashboard.field_import_message__display_name
+#: model:ir.model.fields,field_description:import_dashboard.field_import_payment__display_name
+#: model:ir.model.fields,field_description:import_dashboard.field_import_pos_order__display_name
+#: model:ir.model.fields,field_description:import_dashboard.field_import_purchase_order__display_name
+#: model:ir.model.fields,field_description:import_dashboard.field_import_task__display_name
+#: model:ir.model.fields,field_description:import_dashboard.field_wizard_producto__display_name
+msgid "Display Name"
+msgstr "Nombre Visible"
+
+#. module: import_dashboard
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_bill_of_material__bom_component__do_not
+msgid "Do not add Components"
+msgstr "No agregar Componentes"
+
+#. module: import_dashboard
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_account_move_wizard__invoice_state__draft
+msgid "Draft"
+msgstr "Borrador"
+
+#. module: import_dashboard
+#. odoo-python
+#: code:addons/import_dashboard/wizards/wizard_producto.py:0
+#, python-format
+msgid "El archivo CSV está vacío."
+msgstr "El archivo CSV está vacío."
+
+#. module: import_dashboard
+#. odoo-python
+#: code:addons/import_dashboard/wizards/wizard_producto.py:0
+#, python-format
+msgid ""
+"El archivo Excel está vacío. Debe contener al menos un producto para "
+"validar."
+msgstr ""
+"El archivo Excel está vacío. Debe contener al menos un producto para "
+"validar."
+
+#. module: import_dashboard
+#. odoo-python
+#: code:addons/import_dashboard/wizards/account_move.py:0
+#, python-format
+msgid ""
+"El archivo de plantilla no se encuentra:\n"
+"%s"
+msgstr ""
+"El archivo de plantilla no se encuentra:\n"
+"%s"
+
+#. module: import_dashboard
+#. odoo-python
+#: code:addons/import_dashboard/wizards/import_attendance.py:0
+#, python-format
+msgid "Error reading the CSV file: %s"
+msgstr "Error al leer el archivo CSV: %s"
+
+#. module: import_dashboard
+#. odoo-python
+#: code:addons/import_dashboard/wizards/import_attendance.py:0
+#, python-format
+msgid "Error reading the XLSX file: %s"
+msgstr "Error al leer el archivo XLSX: %s"
+
+#. module: import_dashboard
+#. odoo-python
+#: code:addons/import_dashboard/wizards/wizard_producto.py:0
+#, python-format
+msgid "Errores durante la importación:\n"
+msgstr "Errores durante la importación:\n"
+
+#. module: import_dashboard
+#. odoo-python
+#: code:addons/import_dashboard/wizards/contact_import_wizard.py:0
+#, python-format
+msgid ""
+"Errores durante la importación:\n"
+"\n"
+msgstr ""
+"Errores durante la importación:\n"
+"\n"
+
+#. module: import_dashboard
+#. odoo-python
+#: code:addons/import_dashboard/wizards/contact_import_wizard.py:0
+#, python-format
+msgid ""
+"Errores encontrados en los registros:\n"
+"\n"
+"\n"
+msgstr ""
+"Errores encontrados en los registros:\n"
+"\n"
+"\n"
+
+#. module: import_dashboard
+#. odoo-python
+#: code:addons/import_dashboard/wizards/account_move.py:0
+#, python-format
+msgid "Everything looks correct"
+msgstr "Todo parece correcto"
+
+#. module: import_dashboard
+#: model_terms:ir.ui.view,arch_db:import_dashboard.view_import_contact_wizard_form
+#: model_terms:ir.ui.view,arch_db:import_dashboard.view_wizard_producto_form
+msgid "Exportar Plantilla"
+msgstr "Exportar Plantilla"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_import_account_move_wizard__xlsx_file
+#: model:ir.model.fields,field_description:import_dashboard.field_import_invoice__file
+#: model:ir.model.fields,help:import_dashboard.field_import_invoice__file
+msgid "File"
+msgstr "Archivo"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_import_payment__file_upload
+#: model:ir.model.fields,field_description:import_dashboard.field_import_pos_order__file_upload
+#: model:ir.model.fields,field_description:import_dashboard.field_import_purchase_order__file_upload
+msgid "File Upload"
+msgstr "Subida de Archivo"
+
+#. module: import_dashboard
+#: model:ir.model.fields,help:import_dashboard.field_import_task__file_type
+msgid "File type"
+msgstr "Tipo de archivo"
+
+#. module: import_dashboard
+#: model:ir.model.fields,help:import_dashboard.field_import_purchase_order__file_type
+msgid "File type to import"
+msgstr "Tipo de archivo a importar"
+
+#. module: import_dashboard
+#. odoo-python
+#: code:addons/import_dashboard/wizards/import_attendance.py:0
+#, python-format
+msgid "File validated successfully."
+msgstr "Archivo validado con éxito."
+
+#. module: import_dashboard
+#. odoo-python
+#: code:addons/import_dashboard/wizards/contact_import_wizard.py:0
+#: code:addons/import_dashboard/wizards/contact_import_wizard.py:0
+#, python-format
+msgid "Formato de archivo no válido. Solo se permiten archivos CSV o XLSX."
+msgstr "Invalid file format. Only CSV or XLSX files are allowed."
+
+#. module: import_dashboard
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_invoice__order_number__from_file
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_purchase_order__order_number__from_file
+msgid "From File"
+msgstr "Desde archivo"
+
+#. module: import_dashboard
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_invoice__order_number__from_system
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_purchase_order__order_number__from_system
+msgid "From System"
+msgstr "Desde el sistema"
+
+#. module: import_dashboard
+#: model_terms:ir.ui.view,arch_db:import_dashboard.wizard_import_account_move_form
+msgid "Generar Plantilla"
+msgstr "Generar Plantilla"
+
+#. module: import_dashboard
+#: model_terms:ir.ui.view,arch_db:import_dashboard.res_config_settings_view_form_import_dashboard
+msgid "Habilita la opción para importar órdenes de compra desde un archivo."
+msgstr "Habilita la opción para importar órdenes de compra desde un archivo."
+
+#. module: import_dashboard
+#: model:ir.model.fields,help:import_dashboard.field_import_bill_of_material__bom_component
+msgid "Helps to choose the BOM component behavior"
+msgstr "Ayuda a elegir el comportamiento del componente BOM"
+
+#. module: import_dashboard
+#: model:ir.model.fields,help:import_dashboard.field_import_bill_of_material__bom_type
+msgid "Helps to choose the BOM type"
+msgstr "Ayuda a elegir el tipo de BOM"
+
+#. module: import_dashboard
+#: model:ir.model.fields,help:import_dashboard.field_import_bill_of_material__import_product_by
+msgid "Helps to import product"
+msgstr "Ayuda a importar el producto"
+
+#. module: import_dashboard
+#: model:ir.model.fields,help:import_dashboard.field_import_bill_of_material__file_upload
+msgid "Helps to upload file"
+msgstr "Ayuda a subir el archivo"
+
+#. module: import_dashboard
+#: model:ir.model.fields,help:import_dashboard.field_import_purchase_order__file_upload
+#: model:ir.model.fields,help:import_dashboard.field_import_task__file_upload
+msgid "Helps to upload your file"
+msgstr "Ayuda a subir tu archivo"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_import_account_move_wizard__id
+#: model:ir.model.fields,field_description:import_dashboard.field_import_attendance__id
+#: model:ir.model.fields,field_description:import_dashboard.field_import_bill_of_material__id
+#: model:ir.model.fields,field_description:import_dashboard.field_import_contact_wizard__id
+#: model:ir.model.fields,field_description:import_dashboard.field_import_dashboard__id
+#: model:ir.model.fields,field_description:import_dashboard.field_import_invoice__id
+#: model:ir.model.fields,field_description:import_dashboard.field_import_message__id
+#: model:ir.model.fields,field_description:import_dashboard.field_import_payment__id
+#: model:ir.model.fields,field_description:import_dashboard.field_import_pos_order__id
+#: model:ir.model.fields,field_description:import_dashboard.field_import_purchase_order__id
+#: model:ir.model.fields,field_description:import_dashboard.field_import_task__id
+#: model:ir.model.fields,field_description:import_dashboard.field_wizard_producto__id
+msgid "ID"
+msgstr "ID"
+
+#. module: import_dashboard
+#: model:ir.model.fields,help:import_dashboard.field_import_invoice__update_posted
+msgid ""
+"If enabled, the records in \"Posted\" state will be converted to draft and "
+"values are updated. These records will then again be posted if \"Post "
+"Automatically\" is activated"
+msgstr ""
+"Si está habilitado, los registros en estado \"Publicado\" se convertirán a borrador y "
+"los valores se actualizarán. Estos registros se volverán a publicar si se activa \"Publicar "
+"automáticamente\""
+
+#. module: import_dashboard
+#: model_terms:ir.ui.view,arch_db:import_dashboard.import_attendance_view_form
+#: model_terms:ir.ui.view,arch_db:import_dashboard.import_bill_of_material_view_form
+#: model_terms:ir.ui.view,arch_db:import_dashboard.import_invoice_view_form
+#: model_terms:ir.ui.view,arch_db:import_dashboard.import_payment_view_form
+#: model_terms:ir.ui.view,arch_db:import_dashboard.import_pos_order_view_form
+#: model_terms:ir.ui.view,arch_db:import_dashboard.import_purchase_order_view_form
+#: model_terms:ir.ui.view,arch_db:import_dashboard.import_task_view_form
+#: model_terms:ir.ui.view,arch_db:import_dashboard.wizard_import_account_move_form
+msgid "Import"
+msgstr "Importar"
+
+#. module: import_dashboard
+#: model:ir.actions.act_window,name:import_dashboard.action_import_attendance
+#: model_terms:ir.ui.view,arch_db:import_dashboard.import_attendance_view_form
+msgid "Import Attendance"
+msgstr "Importar Asistencia"
+
+#. module: import_dashboard
+#: model:ir.actions.act_window,name:import_dashboard.action_import_bom
+msgid "Import BOM"
+msgstr "Importar BOM"
+
+#. module: import_dashboard
+#: model_terms:ir.ui.view,arch_db:import_dashboard.import_bill_of_material_view_form
+msgid "Import Bill of Material"
+msgstr "Importar Lista de Materiales"
+
+#. module: import_dashboard
+#: model:ir.model,name:import_dashboard.model_import_contact_wizard
+msgid "Import Contact Wizard"
+msgstr "Asistente de Importación de Contactos"
+
+#. module: import_dashboard
+#: model:ir.actions.act_window,name:import_dashboard.action_import_dashboard_config
+#: model:ir.actions.act_window,name:import_dashboard.import_dashboard_action
+#: model:ir.model,name:import_dashboard.model_import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_import_dashboard__name
+#: model:ir.ui.menu,name:import_dashboard.menu_import_dashboard
+#: model:ir.ui.menu,name:import_dashboard.menu_import_dashboard_config
+#: model_terms:ir.ui.view,arch_db:import_dashboard.res_config_settings_view_form_import_dashboard
+#: model_terms:ir.ui.view,arch_db:import_dashboard.view_form_import_dashboard
+msgid "Import Dashboard"
+msgstr "Panel de Importación"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_import_invoice__file_type
+msgid "Import File Type"
+msgstr "Tipo de Archivo de Importación"
+
+#. module: import_dashboard
+#: model_terms:ir.ui.view,arch_db:import_dashboard.import_invoice_view_form
+#: model_terms:ir.ui.view,arch_db:import_dashboard.wizard_import_account_move_form
+msgid "Import Invoice"
+msgstr "Importar Factura"
+
+#. module: import_dashboard
+#: model:ir.actions.act_window,name:import_dashboard.import_account_move_action
+msgid "Import Invoices / Bills"
+msgstr "Importar Facturas / Facturas Proveedores"
+
+#. module: import_dashboard
+#: model_terms:ir.ui.view,arch_db:import_dashboard.import_pos_order_view_form
+msgid "Import POS Order"
+msgstr "Importar Orden POS"
+
+#. module: import_dashboard
+#: model_terms:ir.ui.view,arch_db:import_dashboard.import_payment_view_form
+msgid "Import Payment"
+msgstr "Importar Pago"
+
+#. module: import_dashboard
+#: model:ir.actions.act_window,name:import_dashboard.action_import_product
+#: model:ir.actions.act_window,name:import_dashboard.action_import_wizard_producto
+msgid "Import Product"
+msgstr "Importar Producto"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_import_bill_of_material__import_product_by
+msgid "Import Products By"
+msgstr "Importar Productos Por"
+
+#. module: import_dashboard
+#: model_terms:ir.ui.view,arch_db:import_dashboard.import_purchase_order_view_form
+msgid "Import Purchase Order"
+msgstr "Importar Orden de Compra"
+
+#. module: import_dashboard
+#: model_terms:ir.ui.view,arch_db:import_dashboard.import_task_view_form
+msgid "Import Task"
+msgstr "Importar Tarea"
+
+#. module: import_dashboard
+#: model:ir.model,name:import_dashboard.model_import_account_move_wizard
+msgid "Import account move wizard"
+msgstr "Asistente de Importación de Movimiento de Cuenta"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_import_invoice__import_product_by
+msgid "Import invoice by"
+msgstr "Importar factura por"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_import_pos_order__import_product_by
+#: model:ir.model.fields,field_description:import_dashboard.field_import_purchase_order__import_product_by
+msgid "Import order by"
+msgstr "Importar orden por"
+
+#. module: import_dashboard
+#: model:ir.model.fields,help:import_dashboard.field_import_pos_order__import_product_by
+msgid "Import product"
+msgstr "Importar producto"
+
+#. module: import_dashboard
+#: model_terms:ir.ui.view,arch_db:import_dashboard.view_import_contact_wizard_form
+#: model_terms:ir.ui.view,arch_db:import_dashboard.view_wizard_producto_form
+msgid "Importar"
+msgstr "Importar"
+
+#. module: import_dashboard
+#: model:ir.actions.act_window,name:import_dashboard.action_import_contact
+#: model_terms:ir.ui.view,arch_db:import_dashboard.view_import_contact_wizard_form
+msgid "Importar Contactos"
+msgstr "Importar Contactos"
+
+#. module: import_dashboard
+#: model:ir.actions.act_window,name:import_dashboard.action_import_invoice
+msgid "Importar Facturas"
+msgstr "Importar Facturas"
+
+#. module: import_dashboard
+#: model:ir.actions.act_window,name:import_dashboard.action_import_pos_order
+msgid "Importar POS"
+msgstr "Importar POS"
+
+#. module: import_dashboard
+#: model:ir.actions.act_window,name:import_dashboard.action_import_payment
+msgid "Importar Pagos"
+msgstr "Importar Pagos"
+
+#. module: import_dashboard
+#: model:ir.model,name:import_dashboard.model_wizard_producto
+#: model_terms:ir.ui.view,arch_db:import_dashboard.view_wizard_producto_form
+msgid "Importar Productos"
+msgstr "Importar Productos"
+
+#. module: import_dashboard
+#: model:ir.actions.act_window,name:import_dashboard.action_import_purchase_order
+msgid "Importar Purchase Order"
+msgstr "Importar Orden de Compra"
+
+#. module: import_dashboard
+#: model:ir.actions.act_window,name:import_dashboard.action_import_task
+msgid "Importar Tareas"
+msgstr "Importar Tareas"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_account_bank_statement_line__is_imported
+#: model:ir.model.fields,field_description:import_dashboard.field_account_move__is_imported
+#: model:ir.model.fields,field_description:import_dashboard.field_account_payment__is_imported
+msgid "Imported"
+msgstr "Importado"
+
+#. module: import_dashboard
+#. odoo-python
+#: code:addons/import_dashboard/wizards/import_attendance.py:0
+#, python-format
+msgid "Imported Successfully"
+msgstr "Importado Exitosamente"
+
+#. module: import_dashboard
+#. odoo-python
+#: code:addons/import_dashboard/wizards/account_move.py:0
+#, python-format
+msgid "Imported successfully"
+msgstr "Importado exitosamente"
+
+#. module: import_dashboard
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_account_move_wizard__search_product__default_code
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_bill_of_material__import_product_by__default_code
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_invoice__import_product_by__default_code
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_pos_order__import_product_by__default_code
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_purchase_order__import_product_by__default_code
+msgid "Internal Reference"
+msgstr "Referencia Interna"
+
+#. module: import_dashboard
+#. odoo-python
+#: code:addons/import_dashboard/wizards/import_attendance.py:0
+#, python-format
+msgid "Invalid CSV file format. Error: %s"
+msgstr "Formato de archivo CSV no válido. Error: %s"
+
+#. module: import_dashboard
+#. odoo-python
+#: code:addons/import_dashboard/wizards/import_attendance.py:0
+#, python-format
+msgid "Invalid XLS file format. Error: %s"
+msgstr "Formato de archivo XLS no válido. Error: %s"
+
+#. module: import_dashboard
+#. odoo-python
+#: code:addons/import_dashboard/wizards/import_attendance.py:0
+#, python-format
+msgid ""
+"Invalid date format for 'Check In'. Supported formats: YYYY-MM-DD HH:MM:SS, "
+"DD/MM/YYYY HH:MM:SS"
+msgstr ""
+"Formato de fecha inválido para 'Check In'. Formatos soportados: YYYY-MM-DD HH:MM:SS, "
+"DD/MM/YYYY HH:MM:SS"
+
+#. module: import_dashboard
+#. odoo-python
+#: code:addons/import_dashboard/wizards/import_attendance.py:0
+#, python-format
+msgid ""
+"Invalid date format for 'Check Out'. Supported formats: YYYY-MM-DD HH:MM:SS,"
+" DD/MM/YYYY HH:MM:SS"
+msgstr ""
+"Formato de fecha inválido para 'Check Out'. Formatos soportados: YYYY-MM-DD HH:MM:SS,"
+" DD/MM/YYYY HH:MM:SS"
+
+#. module: import_dashboard
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_invoice__type__out_invoice
+msgid "Invoice"
+msgstr "Factura"
+
+#. module: import_dashboard
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_dashboard__state__account_move
+msgid "Invoice / Bill"
+msgstr "Factura / Factura Proveedor"
+
+#. module: import_dashboard
+#: model:ir.model,name:import_dashboard.model_import_invoice
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_dashboard__state__import_invoice
+msgid "Invoice Import"
+msgstr "Importación de Facturas"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_import_account_move_wizard__invoice_state
+msgid "Invoice state"
+msgstr "Estado de la factura"
+
+#. module: import_dashboard
+#: model:ir.model.fields,help:import_dashboard.field_import_invoice__type
+msgid "Invoice type"
+msgstr "Tipo de factura"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_import_invoice__type
+msgid "Invoicing Type"
+msgstr "Tipo de Facturación"
+
+#. module: import_dashboard
+#: model:ir.model.fields,help:import_dashboard.field_import_invoice__journal
+msgid "It helps to choose Journal type"
+msgstr "Ayuda a elegir el tipo de Diario"
+
+#. module: import_dashboard
+#: model:ir.model.fields,help:import_dashboard.field_import_invoice__file_type
+#: model:ir.model.fields,help:import_dashboard.field_import_payment__file_type
+#: model:ir.model.fields,help:import_dashboard.field_import_pos_order__file_type
+msgid "It helps to choose the file type"
+msgstr "Ayuda a elegir el tipo de archivo"
+
+#. module: import_dashboard
+#: model:ir.model.fields,help:import_dashboard.field_import_attendance__file_type
+msgid "It helps to select File Type"
+msgstr "Ayuda a seleccionar el tipo de archivo"
+
+#. module: import_dashboard
+#: model:ir.model.fields,help:import_dashboard.field_import_pos_order__file_upload
+msgid "It helps to upload file"
+msgstr "Ayuda a subir el archivo"
+
+#. module: import_dashboard
+#: model:ir.model.fields,help:import_dashboard.field_import_attendance__file_upload
+#: model:ir.model.fields,help:import_dashboard.field_import_payment__file_upload
+msgid "It helps to upload files"
+msgstr "Ayuda a subir archivos"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_import_account_move_wizard__journal_id
+#: model:ir.model.fields,field_description:import_dashboard.field_import_invoice__journal
+msgid "Journal"
+msgstr "Diario"
+
+#. module: import_dashboard
+#: model:ir.model,name:import_dashboard.model_account_move
+msgid "Journal Entry"
+msgstr "Asiento contable"
+
+#. module: import_dashboard
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_bill_of_material__bom_type__kit
+msgid "Kit"
+msgstr "Kit"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_import_account_move_wizard__write_uid
+#: model:ir.model.fields,field_description:import_dashboard.field_import_attendance__write_uid
+#: model:ir.model.fields,field_description:import_dashboard.field_import_bill_of_material__write_uid
+#: model:ir.model.fields,field_description:import_dashboard.field_import_contact_wizard__write_uid
+#: model:ir.model.fields,field_description:import_dashboard.field_import_dashboard__write_uid
+#: model:ir.model.fields,field_description:import_dashboard.field_import_invoice__write_uid
+#: model:ir.model.fields,field_description:import_dashboard.field_import_message__write_uid
+#: model:ir.model.fields,field_description:import_dashboard.field_import_payment__write_uid
+#: model:ir.model.fields,field_description:import_dashboard.field_import_pos_order__write_uid
+#: model:ir.model.fields,field_description:import_dashboard.field_import_purchase_order__write_uid
+#: model:ir.model.fields,field_description:import_dashboard.field_import_task__write_uid
+#: model:ir.model.fields,field_description:import_dashboard.field_wizard_producto__write_uid
+msgid "Last Updated by"
+msgstr "Última actualización por"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_import_account_move_wizard__write_date
+#: model:ir.model.fields,field_description:import_dashboard.field_import_attendance__write_date
+#: model:ir.model.fields,field_description:import_dashboard.field_import_bill_of_material__write_date
+#: model:ir.model.fields,field_description:import_dashboard.field_import_contact_wizard__write_date
+#: model:ir.model.fields,field_description:import_dashboard.field_import_dashboard__write_date
+#: model:ir.model.fields,field_description:import_dashboard.field_import_invoice__write_date
+#: model:ir.model.fields,field_description:import_dashboard.field_import_message__write_date
+#: model:ir.model.fields,field_description:import_dashboard.field_import_payment__write_date
+#: model:ir.model.fields,field_description:import_dashboard.field_import_pos_order__write_date
+#: model:ir.model.fields,field_description:import_dashboard.field_import_purchase_order__write_date
+#: model:ir.model.fields,field_description:import_dashboard.field_import_task__write_date
+#: model:ir.model.fields,field_description:import_dashboard.field_wizard_producto__write_date
+msgid "Last Updated on"
+msgstr "Última actualización en"
+
+#. module: import_dashboard
+#. odoo-python
+#: code:addons/import_dashboard/wizards/wizard_producto.py:0
+#, python-format
+msgid "Lista de precios no encontrada: '%s'"
+msgstr "Lista de precios no encontrada: '%s'"
+
+#. module: import_dashboard
+#. odoo-python
+#: code:addons/import_dashboard/wizards/contact_import_wizard.py:0
+#, python-format
+msgid ""
+"Los siguientes contactos ya existen y no fueron importados:\n"
+"\n"
+msgstr ""
+"Los siguientes contactos ya existen y no fueron importados:\n"
+"\n"
+
+#. module: import_dashboard
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_bill_of_material__bom_type__manufacture_this_product
+msgid "Manufacture this Product"
+msgstr "Fabricar este Producto"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_import_message__message
+#: model:ir.model.fields,help:import_dashboard.field_import_message__message
+msgid "Message"
+msgstr "Mensaje"
+
+#. module: import_dashboard
+#: model:ir.model,name:import_dashboard.model_import_message
+msgid "Message Import"
+msgstr "Importación de Mensajes"
+
+#. module: import_dashboard
+#: model_terms:ir.ui.view,arch_db:import_dashboard.res_config_settings_view_form_import_dashboard
+msgid "Mostrar u ocultar importación de asistencias."
+msgstr "Mostrar u ocultar importación de asistencias."
+
+#. module: import_dashboard
+#: model_terms:ir.ui.view,arch_db:import_dashboard.res_config_settings_view_form_import_dashboard
+msgid "Mostrar u ocultar importación de contactos desde archivo."
+msgstr "Mostrar u ocultar importación de contactos desde archivo."
+
+#. module: import_dashboard
+#: model_terms:ir.ui.view,arch_db:import_dashboard.res_config_settings_view_form_import_dashboard
+msgid "Mostrar u ocultar importación de facturas."
+msgstr "Mostrar u ocultar importación de facturas."
+
+#. module: import_dashboard
+#: model_terms:ir.ui.view,arch_db:import_dashboard.res_config_settings_view_form_import_dashboard
+msgid ""
+"Mostrar u ocultar importación de listas de materiales (Bill of Materials)."
+msgstr ""
+"Mostrar u ocultar importación de listas de materiales (Bill of Materials)."
+
+#. module: import_dashboard
+#: model_terms:ir.ui.view,arch_db:import_dashboard.res_config_settings_view_form_import_dashboard
+msgid "Mostrar u ocultar importación de tareas."
+msgstr "Mostrar u ocultar importación de tareas."
+
+#. module: import_dashboard
+#: model_terms:ir.ui.view,arch_db:import_dashboard.res_config_settings_view_form_import_dashboard
+msgid "Mostrar u ocultar la importación de facturas al dashboard."
+msgstr "Mostrar u ocultar la importación de facturas al dashboard."
+
+#. module: import_dashboard
+#: model_terms:ir.ui.view,arch_db:import_dashboard.res_config_settings_view_form_import_dashboard
+msgid "Mostrar u ocultar la importación de pagos al dashboard."
+msgstr "Mostrar u ocultar la importación de pagos al dashboard."
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_import_account_move_wizard__move_type
+msgid "Move type"
+msgstr "Tipo de movimiento"
+
+#. module: import_dashboard
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_account_move_wizard__search_product__name
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_invoice__import_product_by__name
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_pos_order__import_product_by__name
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_purchase_order__import_product_by__name
+msgid "Name"
+msgstr "Nombre"
+
+#. module: import_dashboard
+#. odoo-python
+#: code:addons/import_dashboard/wizards/import_attendance.py:0
+#, python-format
+msgid "No employee found with the name or identification: %s"
+msgstr "No se encontró empleado con el nombre o identificación: %s"
+
+#. module: import_dashboard
+#. odoo-python
+#: code:addons/import_dashboard/wizards/contact_import_wizard.py:0
+#, python-format
+msgid "No se ha subido ningún archivo. Por favor, sube un archivo CSV o XLSX."
+msgstr "No se ha subido ningún archivo. Por favor, sube un archivo CSV o XLSX."
+
+#. module: import_dashboard
+#. odoo-python
+#: code:addons/import_dashboard/wizards/account_move.py:0
+#, python-format
+msgid ""
+"No se pudo crear el archivo de plantilla:\n"
+"%s"
+msgstr ""
+"No se pudo crear el archivo de plantilla:\n"
+"%s"
+
+#. module: import_dashboard
+#. odoo-python
+#: code:addons/import_dashboard/wizards/account_move.py:0
+#, python-format
+msgid ""
+"No se pudo leer el archivo de plantilla:\n"
+"%s"
+msgstr ""
+"No se pudo leer el archivo de plantilla:\n"
+"%s"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_wizard_producto__file_name
+msgid "Nombre del Archivo"
+msgstr "Nombre del Archivo"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_wizard_producto__internal_notes
+msgid "Notas internas"
+msgstr "Notas internas"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_import_invoice__order_number
+msgid "Number"
+msgstr "Número"
+
+#. module: import_dashboard
+#: model:ir.model.fields,help:import_dashboard.field_import_invoice__order_number
+msgid "Order number"
+msgstr "Número de orden"
+
+#. module: import_dashboard
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_dashboard__state__import_pos_order
+msgid "POS Order"
+msgstr "Orden POS"
+
+#. module: import_dashboard
+#: model:ir.model,name:import_dashboard.model_import_payment
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_dashboard__state__import_payment
+msgid "Payment Import"
+msgstr "Importación de Pagos"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_import_payment__payment_type
+msgid "Payment Type"
+msgstr "Tipo de Pago"
+
+#. module: import_dashboard
+#: model_terms:ir.ui.view,arch_db:import_dashboard.res_config_settings_view_form_import_dashboard
+msgid "Permite importar pedidos de punto de venta desde un archivo."
+msgstr "Permite importar pedidos de punto de venta desde un archivo."
+
+#. module: import_dashboard
+#: model_terms:ir.ui.view,arch_db:import_dashboard.res_config_settings_view_form_import_dashboard
+msgid "Permite importar productos desde archivos .CSV o .XLSX."
+msgstr "Permite importar productos desde archivos .CSV o .XLSX."
+
+#. module: import_dashboard
+#. odoo-python
+#: code:addons/import_dashboard/wizards/import_attendance.py:0
+#, python-format
+msgid "Please upload a valid file before continuing."
+msgstr "Por favor, sube un archivo válido antes de continuar."
+
+#. module: import_dashboard
+#: model:ir.model,name:import_dashboard.model_import_pos_order
+msgid "Pos Orders Import"
+msgstr "Importación de Pedidos POS"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_import_invoice__auto_post
+#: model:ir.model.fields,help:import_dashboard.field_import_invoice__auto_post
+msgid "Post Automatically"
+msgstr "Publicar automáticamente"
+
+#. module: import_dashboard
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_account_move_wizard__invoice_state__posted
+msgid "Posted"
+msgstr "Publicado"
+
+#. module: import_dashboard
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_dashboard__state__wizard_producto
+msgid "Product Import"
+msgstr "Importación de Productos"
+
+#. module: import_dashboard
+#: model:ir.model.fields,help:import_dashboard.field_import_invoice__import_product_by
+msgid "Product import"
+msgstr "Importación de productos"
+
+#. module: import_dashboard
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_dashboard__state__import_purchase_order
+msgid "Purchase Order"
+msgstr "Orden de Compra"
+
+#. module: import_dashboard
+#: model:ir.model,name:import_dashboard.model_import_purchase_order
+msgid "Purchase Order import"
+msgstr "Importación de Orden de Compra"
+
+#. module: import_dashboard
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_payment__payment_type__inbound
+msgid "Receive Money"
+msgstr "Recibir Dinero"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_import_purchase_order__order_number
+msgid "Reference"
+msgstr "Referencia"
+
+#. module: import_dashboard
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_invoice__type__in_refund
+msgid "Refund"
+msgstr "Reembolso"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_wizard_producto__can_purchase
+msgid "Se puede comprar"
+msgstr "Se puede comprar"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_wizard_producto__can_sell
+msgid "Se puede vender"
+msgstr "Se puede vender"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_import_account_move_wizard__search_product
+msgid "Search product by"
+msgstr "Buscar producto por"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_import_attendance__file_type
+#: model:ir.model.fields,field_description:import_dashboard.field_import_bill_of_material__file_type
+#: model:ir.model.fields,field_description:import_dashboard.field_import_payment__file_type
+#: model:ir.model.fields,field_description:import_dashboard.field_import_pos_order__file_type
+#: model:ir.model.fields,field_description:import_dashboard.field_import_purchase_order__file_type
+#: model:ir.model.fields,field_description:import_dashboard.field_import_task__file_type
+msgid "Select File Type"
+msgstr "Seleccionar tipo de archivo"
+
+#. module: import_dashboard
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_payment__payment_type__outbound
+msgid "Send Money"
+msgstr "Enviar dinero"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_import_dashboard__show_account_move
+msgid "Show Account Move"
+msgstr "Mostrar movimiento de cuenta"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_import_dashboard__show_attendance
+msgid "Show Attendance"
+msgstr "Mostrar Asistencia"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_import_dashboard__show_bom
+msgid "Show BOM"
+msgstr "Mostrar BOM"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_import_dashboard__show_contact
+msgid "Show Contact"
+msgstr "Mostrar Contacto"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_import_dashboard__show_invoice
+msgid "Show Invoice Import"
+msgstr "Mostrar importación de facturas"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_import_dashboard__show_pos
+msgid "Show POS Order"
+msgstr "Mostrar orden POS"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_import_dashboard__show_payment
+msgid "Show Payment Import"
+msgstr "Mostrar importación de pagos"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_import_dashboard__show_product
+msgid "Show Product Import"
+msgstr "Mostrar importación de productos"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_import_dashboard__show_purchase
+msgid "Show Purchase"
+msgstr "Mostrar compra"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_import_dashboard__show_task
+msgid "Show Task"
+msgstr "Mostrar tarea"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_import_dashboard__state
+msgid "State"
+msgstr "Estado"
+
+#. module: import_dashboard
+#. odoo-python
+#: code:addons/import_dashboard/wizards/account_move.py:0
+#: code:addons/import_dashboard/wizards/account_move.py:0
+#, python-format
+msgid "Success"
+msgstr "Éxito"
+
+#. module: import_dashboard
+#: model:ir.model,name:import_dashboard.model_import_task
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_dashboard__state__import_task
+msgid "Task Import"
+msgstr "Importación de tareas"
+
+#. module: import_dashboard
+#: model_terms:ir.ui.view,arch_db:import_dashboard.import_attendance_view_form
+#: model_terms:ir.ui.view,arch_db:import_dashboard.import_bill_of_material_view_form
+#: model_terms:ir.ui.view,arch_db:import_dashboard.import_invoice_view_form
+#: model_terms:ir.ui.view,arch_db:import_dashboard.import_payment_view_form
+#: model_terms:ir.ui.view,arch_db:import_dashboard.import_pos_order_view_form
+#: model_terms:ir.ui.view,arch_db:import_dashboard.import_purchase_order_view_form
+#: model_terms:ir.ui.view,arch_db:import_dashboard.import_task_view_form
+#: model_terms:ir.ui.view,arch_db:import_dashboard.view_import_contact_wizard_form
+#: model_terms:ir.ui.view,arch_db:import_dashboard.view_wizard_producto_form
+#: model_terms:ir.ui.view,arch_db:import_dashboard.wizard_import_account_move_form
+msgid "Test"
+msgstr "Prueba"
+
+#. module: import_dashboard
+#. odoo-python
+#: code:addons/import_dashboard/wizards/import_attendance.py:0
+#, python-format
+msgid "The CSV file is empty."
+msgstr "El archivo CSV está vacío."
+
+#. module: import_dashboard
+#. odoo-python
+#: code:addons/import_dashboard/wizards/import_attendance.py:0
+#, python-format
+msgid "The XLSX file is empty."
+msgstr "El archivo XLSX está vacío."
+
+#. module: import_dashboard
+#: model:ir.model.fields,help:import_dashboard.field_import_payment__payment_type
+msgid "Type of payment (Receive Money or Send Money)"
+msgstr "Tipo de pago (Recibir dinero o Enviar dinero)"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_wizard_producto__uom
+msgid "Unidad de Medida"
+msgstr "Unidad de Medida"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_wizard_producto__uom_purchase
+msgid "Unidad de Medida de Compra"
+msgstr "Unidad de Medida de Compra"
+
+#. module: import_dashboard
+#: model:ir.model.fields,help:import_dashboard.field_wizard_producto__uom
+msgid "Unidad de medida estándar para el producto"
+msgstr "Unidad de medida estándar para el producto"
+
+#. module: import_dashboard
+#: model:ir.model.fields,help:import_dashboard.field_wizard_producto__uom_purchase
+msgid "Unidad de medida utilizada para la compra"
+msgstr "Unidad de medida utilizada para la compra"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_import_invoice__update_posted
+msgid "Update Posted Record?"
+msgstr "¿Actualizar registro publicado?"
+
+#. module: import_dashboard
+#: model:ir.model.fields,field_description:import_dashboard.field_import_attendance__file_upload
+#: model:ir.model.fields,field_description:import_dashboard.field_import_bill_of_material__file_upload
+#: model:ir.model.fields,field_description:import_dashboard.field_import_task__file_upload
+msgid "Upload File"
+msgstr "Subir archivo"
+
+#. module: import_dashboard
+#: model:ir.model.fields,help:import_dashboard.field_import_bill_of_material__file_type
+msgid "Uploading file Type"
+msgstr "Tipo de archivo de carga"
+
+#. module: import_dashboard
+#. odoo-python
+#: code:addons/import_dashboard/wizards/import_attendance.py:0
+#, python-format
+msgid "Validation Success"
+msgstr "Éxito de validación"
+
+#. module: import_dashboard
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_account_move_wizard__move_type__in_invoice
+msgid "Vendor Bill"
+msgstr "Factura del proveedor"
+
+#. module: import_dashboard
+#. odoo-python
+#: code:addons/import_dashboard/wizards/import_attendance.py:0
+#, python-format
+msgid "Worked Hours must be a valid number"
+msgstr "Las horas trabajadas deben ser un número válido"
+
+#. module: import_dashboard
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_attendance__file_type__xls
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_bill_of_material__file_type__xls
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_task__file_type__xls
+msgid "XLS File"
+msgstr "Archivo XLS"
+
+#. module: import_dashboard
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_invoice__file_type__xlsx
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_payment__file_type__xlsx
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_pos_order__file_type__xlsx
+#: model:ir.model.fields.selection,name:import_dashboard.selection__import_purchase_order__file_type__xlsx
+msgid "XLSX File"
+msgstr "Archivo XLSX"
+
+#. module: import_dashboard
+#: model:ir.model.fields,help:import_dashboard.field_import_task__user_id
+msgid "assigned to user"
+msgstr "asignado al usuario"
+
+#. module: import_dashboard
+#: model:ir.model.fields,help:import_dashboard.field_import_purchase_order__import_product_by
+msgid "import product"
+msgstr "importar producto"
+
+#. module: import_dashboard
+#: model:ir.model.fields,help:import_dashboard.field_import_purchase_order__order_number
+msgid "reference"
+msgstr "referencia"

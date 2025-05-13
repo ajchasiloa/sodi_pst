@@ -10,37 +10,37 @@ from odoo.exceptions import ValidationError
 
 class ImportBillOfMaterial(models.TransientModel):
     _name = 'import.bill.of.material'
-    _description = 'Bill of Material Import'
+    _description = 'Importación de Listas de Materiales'
 
     file_type = fields.Selection(
-        [('csv', 'CSV File'), ('xls', 'XLS File')],
+        [('csv', 'Archivo CSV'), ('xls', 'Archivo XLS')],
         default='csv',
-        string='Select File Type',
-        help="Uploading file Type"
+        string='Seleccionar Tipo de Archivo',
+        help="Tipo de archivo para cargar"
     )
     file_upload = fields.Binary(
-        string='Upload File',
-        help="Helps to upload file",
+        string='Subir Archivo',
+        help="Ayuda a subir el archivo",
         attachment=False
     )
     import_product_by = fields.Selection(
-        [('default_code', 'Internal Reference'), ('barcode', 'Barcode')],
+        [('default_code', 'Referencia Interna'), ('barcode', 'Código de Barras')],
         default='default_code',
-        string="Import Products By",
-        help="Helps to import product"
+        string="Importar Productos Por",
+        help="Ayuda a importar el producto"
     )
     bom_type = fields.Selection(
-        [('manufacture_this_product', 'Manufacture this Product'),
-         ('kit', 'Kit'), ('both', 'Both')],
-        string="BOM Type",
+        [('manufacture_this_product', 'Fabricar este Producto'),
+         ('kit', 'Kit'), ('both', 'Ambos')],
+        string="Tipo de BOM",
         default='both',
-        help="Helps to choose the BOM type"
+        help="Ayuda a elegir el tipo de BOM"
     )
     bom_component = fields.Selection(
-        [('add', 'Add Components'), ('do_not', 'Do not add Components')],
+        [('add', 'Agregar Componentes'), ('do_not', 'No agregar Componentes')],
         default='add',
-        string="BOM Component",
-        help="Helps to choose the BOM component behavior"
+        string="Componente BOM",
+        help="Ayuda a elegir el comportamiento de los componentes BOM"
     )
 
     def action_import_bom(self):
@@ -48,7 +48,6 @@ class ImportBillOfMaterial(models.TransientModel):
         if not self.file_upload:
             raise ValidationError("Por favor, sube un archivo válido antes de continuar.")
 
-        # Load CSV
         if self.file_type == 'csv':
             try:
                 csv_data = base64.b64decode(self.file_upload)
@@ -56,9 +55,7 @@ class ImportBillOfMaterial(models.TransientModel):
                 data_file.seek(0)
                 datas = csv.DictReader(data_file, delimiter=',')
             except Exception:
-                raise ValidationError("archivo CSV no válido.")
-
-        # Load XLS
+                raise ValidationError("Archivo CSV no válido.")
         elif self.file_type == 'xls':
             try:
                 fp = tempfile.NamedTemporaryFile(delete=False, suffix=".xls")
@@ -72,7 +69,7 @@ class ImportBillOfMaterial(models.TransientModel):
                     for i in range(1, sheet.nrows)
                 ]
             except Exception:
-                raise ValidationError("Invalid XLS file.")
+                raise ValidationError("Archivo XLS no válido.")
 
         row = 0
         imported = 0
@@ -85,68 +82,72 @@ class ImportBillOfMaterial(models.TransientModel):
             vals = {}
             product_tmpl = False
 
-            # Buscar producto principal
-            if item.get('Product'):
-                if self.import_product_by == 'default_code' and item.get('Product/Internal Reference'):
+            if item.get('Producto'):
+                if self.import_product_by == 'default_code' and item.get('Referencia Interna'):
                     product_tmpl = self.env['product.template'].search([
-                        ('default_code', '=', item.get('Product/Internal Reference'))], limit=1)
-                elif self.import_product_by == 'barcode' and item.get('Product/Barcode'):
+                        ('default_code', '=', item.get('Referencia Interna'))], limit=1)
+                elif self.import_product_by == 'barcode' and item.get('Código de Barras'):
                     product_tmpl = self.env['product.template'].search([
-                        ('barcode', '=', item.get('Product/Barcode'))], limit=1)
+                        ('barcode', '=', item.get('Código de Barras'))], limit=1)
                 else:
                     product_tmpl = self.env['product.template'].search([
-                        ('name', '=', item.get('Product'))], limit=1)
+                        ('name', '=', item.get('Producto'))], limit=1)
 
                 if not product_tmpl:
                     product_tmpl = self.env['product.template'].create({
-                        'name': item.get('Product'),
-                        'default_code': item.get('Product/Internal Reference'),
-                        'barcode': item.get('Product/Barcode')
+                        'name': item.get('Producto'),
+                        'default_code': item.get('Referencia Interna'),
+                        'barcode': item.get('Código de Barras')
                     })
-                    warning_msg += f"\n◼ Created new product on row {row}"
+                    warning_msg += f"\n◼ Producto nuevo creado en la fila {row}"
 
                 vals['product_tmpl_id'] = product_tmpl.id
             else:
-                error_msg += f"\n⚠ Product missing on row {row}"
+                error_msg += f"\n⚠ Producto faltante en la fila {row}"
 
-            # Otras propiedades
-            vals['product_qty'] = item.get('Quantity') or 1.0
-            vals['code'] = item.get('Reference') or ''
+            try:
+                vals['product_qty'] = float(item.get('Cantidad') or 1.0)
+            except Exception:
+                vals['product_qty'] = 1.0
+            vals['code'] = item.get('Referencia') or ''
 
             bom_type = self.bom_type
-            if bom_type == 'both' and item.get('BoM Type'):
-                bom_type = 'manufacture_this_product' if item['BoM Type'] == 'Manufacture this product' else 'kit'
+            if bom_type == 'both' and item.get('Tipo de Lista de Materiales'):
+                bom_type = 'manufacture_this_product' if item['Tipo de Lista de Materiales'] == 'Fabricar este Producto' else 'kit'
             vals['type'] = 'normal' if bom_type == 'manufacture_this_product' else 'phantom'
 
-            # Componentes
             components = {}
-            if self.bom_component == 'add' and item.get('Components'):
+            if self.bom_component == 'add' and item.get('Componente de BoM'):
                 product_component = False
-                if item.get('Components/Internal Reference'):
+                if item.get('Componente de BoM/Referencia Interna'):
                     product_component = self.env['product.product'].search([
-                        ('default_code', '=', item.get('Components/Internal Reference'))], limit=1)
-                elif item.get('Components/Barcode'):
+                        ('default_code', '=', item.get('Componente de BoM/Referencia Interna'))], limit=1)
+                elif item.get('Componente de BoM/Código de Barras'):
                     product_component = self.env['product.product'].search([
-                        ('barcode', '=', item.get('Components/Barcode'))], limit=1)
+                        ('barcode', '=', item.get('Componente de BoM/Código de Barras'))], limit=1)
                 else:
                     product_component = self.env['product.product'].search([
-                        ('name', '=', item.get('Components'))], limit=1)
+                        ('name', '=', item.get('Componente de BoM'))], limit=1)
 
                 if not product_component:
                     product_component = self.env['product.product'].create({
-                        'name': item.get('Components'),
-                        'default_code': item.get('Components/Internal Reference'),
-                        'barcode': item.get('Components/Barcode'),
+                        'name': item.get('Componente de BoM'),
+                        'default_code': item.get('Componente de BoM/Referencia Interna'),
+                        'barcode': item.get('Componente de BoM/Código de Barras'),
                     })
-                    warning_msg += f"\n◼ Created new component on row {row}"
+                    warning_msg += f"\n◼ Componente nuevo creado en la fila {row}"
+
+                try:
+                    component_qty = float(item.get('Cantidad de Componente') or 1.0)
+                except Exception:
+                    component_qty = 1.0
 
                 components = {
                     'product_id': product_component.id,
-                    'product_qty': item.get('BoM Lines/Quantity') or 1.0
+                    'product_qty': component_qty
                 }
                 vals['bom_line_ids'] = [(0, 0, components)]
 
-            # Crear o actualizar BOM
             if product_tmpl:
                 bom_id = self.env['mrp.bom'].search([
                     ('product_tmpl_id', '=', product_tmpl.id)
@@ -164,7 +165,7 @@ class ImportBillOfMaterial(models.TransientModel):
         return {
             'effect': {
                 'fadeout': 'slow',
-                'message': f"✅ Imported: {imported}, Updated: {updated}{warning_msg}",
+                'message': f"✅ Importado: {imported}, Actualizado: {updated}{warning_msg}",
                 'type': 'rainbow_man',
             }
         }
@@ -176,7 +177,6 @@ class ImportBillOfMaterial(models.TransientModel):
         datas = {}
         errors = ""
 
-        # Load CSV
         if self.file_type == 'csv':
             try:
                 csv_data = base64.b64decode(self.file_upload)
@@ -185,8 +185,6 @@ class ImportBillOfMaterial(models.TransientModel):
                 datas = csv.DictReader(data_file, delimiter=',')
             except Exception:
                 raise ValidationError("Archivo CSV no válido.")
-
-        # Load XLS
         elif self.file_type == 'xls':
             try:
                 fp = tempfile.NamedTemporaryFile(delete=False, suffix=".xls")
@@ -200,44 +198,35 @@ class ImportBillOfMaterial(models.TransientModel):
                     for i in range(1, sheet.nrows)
                 ]
             except Exception:
-                raise ValidationError("Invalid XLS file.")
+                raise ValidationError("Archivo XLS no válido.")
 
         row = 0
 
         for item in datas:
             row += 1
 
-            # Verificar Producto
-            if not item.get('Product'):
-                errors += f"Product missing on row {row}\n"
+            if not item.get('Producto'):
+                errors += f"Producto faltante en la fila {row}\n"
 
-            # Validación de cantidad
-            quantity = item.get('Quantity')
+            quantity = item.get('Cantidad')
             if quantity is None or quantity == "":
-                errors += f"Quantity is missing or empty on row {row}\n"
+                errors += f"Cantidad faltante o vacía en la fila {row}\n"
             else:
                 try:
-                    # Verificar que la cantidad sea un número
                     float(quantity)
                 except ValueError:
-                    errors += f"Invalid quantity on row {row}: {quantity}\n"
+                    errors += f"Cantidad inválida en la fila {row}: {quantity}\n"
 
-            # Validación de componentes (si se añaden componentes)
-            if self.bom_component == 'add' and item.get('Components'):
-                component_error = False
+            if self.bom_component == 'add' and item.get('Componente de BoM'):
                 try:
-                    # Verificar que la cantidad del componente sea un número
-                    component_quantity = item.get('BoM Lines/Quantity')
+                    component_quantity = item.get('Cantidad de Componente')
                     if component_quantity is None or component_quantity == "":
-                        errors += f"Component quantity missing on row {row}\n"
+                        errors += f"Cantidad de componente faltante en la fila {row}\n"
                     else:
-                        float(component_quantity)  # Verificar que sea un número
+                        float(component_quantity)
                 except ValueError:
-                    component_error = True
-                if component_error:
-                    errors += f"Invalid component quantity on row {row}\n"
+                    errors += f"Cantidad de componente inválida en la fila {row}\n"
 
-        # Si hay errores, lanzamos un mensaje de validación
         if errors:
             raise ValidationError(errors)
 
@@ -245,55 +234,64 @@ class ImportBillOfMaterial(models.TransientModel):
             'type': 'ir.actions.client',
             'tag': 'display_notification',
             'params': {
-                'title': 'Validation Success',
-                'message': 'The file was validated successfully',
+                'title': 'Validación Exitosa',
+                'message': 'El archivo fue validado correctamente',
                 'sticky': False,
             }
         }
 
     def action_generate_template(self):
-        """Genera una plantilla Excel para importar estructuras de BOM"""
+        """Genera una plantilla Excel para importar estructuras de BOM con formato mejorado"""
 
         import base64
         from io import BytesIO
         import xlsxwriter
 
-        # Encabezados requeridos
+        # Encabezados
         field_labels = [
-            "Producto",                         # Producto
-            "Producto/Referencia Interna",      # Referencia Interna del Producto
-            "Producto/Código de Barras",        # Código de Barras del Producto
-            "Cantidad",                         # Cantidad
-            "Referencia",                       # Referencia
-            "Tipo de Lista de Materiales",      # Tipo de BoM
-            "Componentes",                      # Componentes
-            "Componentes/Referencia Interna",   # Referencia Interna de Componentes
-            "Componentes/Código de Barras",     # Código de Barras de Componentes
-            "Líneas de BoM/Cantidad"            # Cantidad de Líneas de BoM
+            "ID Externo",
+            "Referencia",
+            "Producto",
+            "Cantidad",
+            "Tipo de Lista de Materiales",
+            "Componente de BoM",
+            "Cantidad de Componente"
         ]
 
-        # Crear Excel en memoria
+        # Filas de ejemplo (1 ejemplo)
+        example_data = [
+            ["bom_001", "BOM_MESA001", "Mesa de Madera", 1, "Fabricar este Producto", "Pata de Madera", 4],
+            ["boom_002", "BOM_SC234", "[FURN_7800] D", 1, "Kit", "[FURN_2100] Drawer Black", 5]
+        ]
+
         output = BytesIO()
         workbook = xlsxwriter.Workbook(output, {'in_memory': True})
-        worksheet = workbook.add_worksheet("BOM Import Template")
+        worksheet = workbook.add_worksheet("Plantilla de BOM")
 
-        # Formato para encabezados
+        # Formato del encabezado
         header_format = workbook.add_format({'bold': True, 'bg_color': '#D9D9D9'})
+
+        # Escribir encabezados y ajustar ancho
         for col, label in enumerate(field_labels):
             worksheet.write(0, col, label, header_format)
+            worksheet.set_column(col, col, len(label) + 2)
+
+        # Escribir filas de ejemplo
+        for row_idx, row_data in enumerate(example_data, start=1):
+            for col_idx, value in enumerate(row_data):
+                worksheet.write(row_idx, col_idx, value)
 
         workbook.close()
         output.seek(0)
 
-        # Crear adjunto
+        # Crear adjunto en Odoo
         attachment = self.env['ir.attachment'].create({
-            'name': 'bom_import_template.xlsx',
+            'name': 'plantilla_importacion_bom.xlsx',
             'type': 'binary',
             'datas': base64.b64encode(output.read()).decode(),
             'mimetype': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         })
 
-        # Retornar archivo para descarga
         return {
             'type': 'ir.actions.act_url',
             'url': f'/web/content/{attachment.id}?download=true',
